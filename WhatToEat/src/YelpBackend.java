@@ -1,8 +1,8 @@
 // Backend code to get reviews from a business name using Yelp dataset
 
 import java.io.*;
+import java.net.*;
 import java.util.Scanner;
-import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject; 
 import org.json.simple.parser.*;
 import java.util.ArrayList;
@@ -12,6 +12,10 @@ public class YelpBackend
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
     static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+    static final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key={API_KEY}";
+    static final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
+    static final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
+    
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {
@@ -47,6 +51,9 @@ public class YelpBackend
         {
         	System.out.println(reviews.get(i));
         }
+        
+        QueryGoogleApi(reviews);
+        
         CleanUp(scanners);
     }
     
@@ -90,6 +97,49 @@ public class YelpBackend
             }
         }
     	return reviews;
+    }
+    
+    public static void QueryGoogleApi(ArrayList<String> reviews)
+    {
+    	for (int i = 0; i < reviews.size(); i ++)
+    	{
+    		try
+        	{
+        		URL url = new URL(GOOGLE_URL);
+            	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            	connection.setRequestMethod("POST");
+            	connection.setRequestProperty("Content-Type", "application/json");
+            	connection.setDoOutput(true);
+            	OutputStream os = connection.getOutputStream();
+            	OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");    
+            	osw.write(REQUEST_BEG + reviews.get(i) + REQUEST_END);
+            	osw.flush();
+            	osw.close();
+            	os.close();
+            	connection.connect();
+            	
+            	String reply;
+            	BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
+            	ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            	int result = inputStream.read();
+            	while(result != -1) {
+            	    buf.write((byte) result);
+            	    result = inputStream.read();
+            	}
+            	reply = buf.toString();
+            	System.out.println(reply);
+        	}
+        	catch(Exception e)
+        	{
+        		System.out.println("Error.");
+        		return;
+        	}
+        	finally
+        	{
+        		System.out.println("Finally");
+        	}
+    	}
     }
 }
 
