@@ -12,7 +12,7 @@ public class YelpBackend
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
     static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
-    static final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key={API_KEY}";
+    static final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key=";
     static final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
     static final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
     
@@ -101,11 +101,12 @@ public class YelpBackend
     
     public static void QueryGoogleApi(ArrayList<String> reviews)
     {
+    	String apiKey = System.getenv("API_KEY");
     	for (int i = 0; i < reviews.size(); i ++)
     	{
     		try
         	{
-        		URL url = new URL(GOOGLE_URL);
+        		URL url = new URL(GOOGLE_URL + apiKey);
             	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             	connection.setRequestMethod("POST");
@@ -133,6 +134,8 @@ public class YelpBackend
         	catch(Exception e)
         	{
         		System.out.println("Error.");
+        		System.out.println(e);
+        		
         		return;
         	}
         	finally
