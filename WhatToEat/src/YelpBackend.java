@@ -282,43 +282,4 @@ public class YelpBackend
 		}
 		return reviews;
 	}
-
-	public static void QueryGoogleApi(ArrayList<String> reviews) {
-		String apiKey = System.getenv("API_KEY");
-		for (int i = 0; i < reviews.size(); i++) {
-			try {
-				URL url = new URL(GOOGLE_URL + apiKey);
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Content-Type", "application/json");
-				connection.setDoOutput(true);
-				OutputStream os = connection.getOutputStream();
-				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-				osw.write(REQUEST_BEG + reviews.get(i) + REQUEST_END);
-				osw.flush();
-				osw.close();
-				os.close();
-				connection.connect();
-
-				String reply;
-				BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
-				ByteArrayOutputStream buf = new ByteArrayOutputStream();
-				int result = inputStream.read();
-				while (result != -1) {
-					buf.write((byte) result);
-					result = inputStream.read();
-				}
-				reply = buf.toString();
-				System.out.println(reply);
-			} catch (Exception e) {
-				System.out.println("Error.");
-				System.out.println(e);
-
-				return;
-			} finally {
-				System.out.println("Finally");
-			}
-		}
-	}
 }
