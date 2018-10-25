@@ -5,13 +5,13 @@ import java.net.*;
 import java.util.Scanner;
 import org.json.simple.JSONObject; 
 import org.json.simple.parser.*;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class YelpBackend
 {
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
-    static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+    static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
     static final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key=";
     static final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
     static final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
@@ -19,7 +19,7 @@ public class YelpBackend
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {
-    	ArrayList<Scanner> scanners = new ArrayList<Scanner>();
+    	LinkedList<Scanner> scanners = new LinkedList<Scanner>();
         Scanner inputScanner = new Scanner(System.in);
         scanners.add(inputScanner);
         File businessFile = new File(BUSINESS_PATH);
@@ -39,7 +39,7 @@ public class YelpBackend
             CleanUp(scanners);
             return;
         }
-        ArrayList<String> reviews = GetReviews(businessId, reviewScanner);
+        LinkedList<String> reviews = GetReviews(businessId, reviewScanner);
         if (reviews.size() == 0)
         {
         	System.out.println("Sorry, we do not have any reviews for " + restName);
@@ -50,14 +50,20 @@ public class YelpBackend
         for (int i = 0; i < reviews.size(); i ++)
         {
         	System.out.println(reviews.get(i));
+        	System.out.println("\n\n\n\n\n\n");
         }
         
-        QueryGoogleApi(reviews);
+        reviews = EliminateQuotes(reviews);
+        
+        System.out.println("There are " + reviews.size() + " reviews for this place");
+        
+        LinkedList<String> sentimentAnalysis = new LinkedList<String>();
+        sentimentAnalysis = QueryGoogleApi(reviews);
         
         CleanUp(scanners);
     }
     
-    public static void CleanUp(ArrayList<Scanner> scanners)
+    public static void CleanUp(LinkedList<Scanner> scanners)
     {
     	// Clean up once we are done
     	for (int i = 0; i < scanners.size(); i ++)
@@ -82,9 +88,9 @@ public class YelpBackend
         return null;
     }
     
-    public static ArrayList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
+    public static LinkedList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
     {
-    	ArrayList<String> reviews = new ArrayList<String>();
+    	LinkedList<String> reviews = new LinkedList<String>();
         while (reviewScanner.hasNextLine())
         {
             String line = reviewScanner.nextLine();
@@ -99,9 +105,23 @@ public class YelpBackend
     	return reviews;
     }
     
-    public static void QueryGoogleApi(ArrayList<String> reviews)
+    public static LinkedList<String> EliminateQuotes(LinkedList<String> reviews)
+    {
+    	String text = "";
+    	for (int i = 0; i < reviews.size(); i ++)
+    	{
+    		text = reviews.get(i);
+    		reviews.remove(i);
+    		reviews.add(i, text.replace("\"", "\\\""));
+    	}
+    	return reviews;
+    }
+    
+    public static LinkedList<String> QueryGoogleApi(LinkedList<String> reviews)
     {
     	String apiKey = System.getenv("API_KEY");
+    	LinkedList<String> sentimentAnalysis = new LinkedList<String>();
+    	System.out.println(reviews.size());
     	for (int i = 0; i < reviews.size(); i ++)
     	{
     		try
@@ -129,20 +149,22 @@ public class YelpBackend
             	    result = inputStream.read();
             	}
             	reply = buf.toString();
-            	System.out.println(reply);
+            	//System.out.println(reply);
+            	sentimentAnalysis.add(reply);
         	}
         	catch(Exception e)
         	{
         		System.out.println("Error.");
         		System.out.println(e);
         		
-        		return;
+        		return null;
         	}
         	finally
         	{
         		System.out.println("Finally");
         	}
     	}
+    	return sentimentAnalysis;
     }
 }
 

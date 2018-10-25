@@ -2,3 +2,5 @@
 *.class
 /WhatToEat/yelp_dataset/*
 /WhatToEat/src/yelp_dataset/*
+.metadata/*
+.recommenders/*
