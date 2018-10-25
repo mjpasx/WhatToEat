@@ -266,20 +266,4 @@ public class YelpBackend
 				System.out.println("Finally");
 			}
 		}
-
-
-	public static ArrayList<String> GetReviews(String businessId, Scanner reviewScanner)
-			throws FileNotFoundException, ParseException {
-		ArrayList<String> reviews = new ArrayList<String>();
-		while (reviewScanner.hasNextLine()) {
-			String line = reviewScanner.nextLine();
-			Object obj = new JSONParser().parse(line);
-			JSONObject reviewObj = (JSONObject) obj;
-			String id = (String) reviewObj.get("business_id");
-			if (businessId.equals(id)) {
-				reviews.add((String) reviewObj.get("text"));
-			}
-		}
-		return reviews;
-	}
 }
