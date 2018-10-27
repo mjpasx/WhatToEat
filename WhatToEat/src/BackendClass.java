@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -113,7 +114,8 @@ public class BackendClass
             	    result = inputStream.read();
             	}
             	reply = buf.toString();
-            	//System.out.println(reply);
+            	System.out.println(reply);
+            	System.out.println("\n\n\n\n\n");
             	sentimentAnalysis.add(reply);
         	}
         	catch(Exception e)
@@ -129,6 +131,44 @@ public class BackendClass
         	}
     	}
     	return sentimentAnalysis;
+    }
+    
+    public LinkedList<EntityClass> GetEntities(String review, String revText) throws ParseException
+    {
+    	LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
+    	EntityClass object = new EntityClass();
+    	JSONObject entityObj;
+    	String name;
+    	Object sentiment;
+    	JSONObject sentimentObj;
+    	Object mag;
+    	double magnitude;
+    	
+    	Object obj = new JSONParser().parse(review);
+        JSONObject reviewObj = (JSONObject) obj;
+        JSONArray ents = (JSONArray) reviewObj.get("entities");
+        for (int i = 0; i < ents.size(); i ++)
+        {
+        	entityObj = (JSONObject) ents.get(i);
+        	name = (String) entityObj.get("name");
+        	sentiment = entityObj.get("sentiment");
+        	sentimentObj = (JSONObject) sentiment;
+        	mag = sentimentObj.get("score");
+        	if (mag instanceof Long)
+        	{
+        		magnitude = ((Long) mag).doubleValue();
+        	}
+        	else
+        	{
+        		magnitude = (double) mag;
+        	}
+        	object.SetWord(name);
+        	object.SetSentiment(magnitude);
+        	object.SetReview(revText);
+        	entities.add(object);
+        }
+    	
+    	return entities;
     }
 
 	/**

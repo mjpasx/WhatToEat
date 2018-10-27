@@ -11,7 +11,8 @@ public class YelpBackend
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
     static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
-
+    //static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+    
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {
     	BackendClass backend = new BackendClass();
@@ -55,8 +56,17 @@ public class YelpBackend
 
         System.out.println("There are " + reviews.size() + " reviews for this place");
 
-        LinkedList<String> sentimentAnalysis = new LinkedList<String>();
-        sentimentAnalysis = backend.QueryGoogleApi(reviews);
+        LinkedList<String> sentimentAnalysis = backend.QueryGoogleApi(reviews);
+        LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
+        
+        for (int i = 0; i < sentimentAnalysis.size(); i ++)
+        {
+        	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i)));
+        }
+        
+        System.out.println(entities.get(0).GetSentiment());
+        System.out.println(entities.get(0).GetWord());
+        System.out.println(entities.get(0).GetReview());
 
         backend.CleanUp(scanners);
     }
