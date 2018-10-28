@@ -63,17 +63,62 @@ public class TestMatching
         scanners.add(reviewScanner);
         
         String businessId = "";
-    	LinkedList<String> businessIds = new LinkedList<String>();
     	LinkedList<LinkedList<String>> allReviews = new LinkedList<LinkedList<String>>();
+    	LinkedList<String> reviews = new LinkedList<String>();
     	// Get all of the reviews for each business
 		for (int i = 0; i < TEST_RESTAURANTS.length; i ++)
     	{
     		businessId = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
-    		allReviews.add(backend.GetReviews(businessId, reviewScanner));
+    		reviews = backend.GetReviews(businessId, reviewScanner);
+    		allReviews.add(backend.EliminateQuotes(reviews));
     	}
 		
-		int numLevenstein = GetLevensteinMatches(allReviews);
+		//int numLevenstein = GetLevensteinMatches(allReviews);
     	
+    }
+    
+    public static boolean LevensteinEditDistance(String str1, String str2, int distance)
+    {
+    	str1 = str1.toLowerCase();
+    	str2 = str2.toLowerCase();
+    	
+    	int len1 = str1.length();
+    	int len2 = str2.length();
+    	int[][] matrix = new int[len1 + 1][len2 + 1];
+    	int cost;
+    	
+    	// Initialize the first column and row to be i and j respectively
+    	for (int i = 0; i < len1; i ++)
+    	{
+    		matrix[i][0] = i;
+    	}
+    	for (int i = 0; i < len2; i ++)
+    	{
+    		matrix[0][i] = i;
+    	}
+    	
+    	for (int j = 1; j < len2 + 1; j ++)
+    	{
+    		for (int i = 1; i < len1 + 1; i ++)
+    		{
+    			// If the characters are the same, a substitution has cost 0
+    			cost = 1;
+    			if (str1.charAt(i - 1) == str2.charAt(j - 1))
+    			{
+    				cost = 0;
+    			}
+    			// Find min of 3 operations
+    			matrix[i][j] = Math.min(Math.min(matrix[i-1][j] + 1, // deletion
+    					matrix[i][j-1] + 1), // addition
+    					matrix[i-1][j-1] + cost); //substitution
+    		}
+    	}
+    	        
+        if (matrix[len1][len2] > distance)
+        {
+        	return false;
+        }
+        return true;
     }
 }
 
