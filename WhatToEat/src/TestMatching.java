@@ -63,18 +63,33 @@ public class TestMatching
         scanners.add(reviewScanner);
         
         String businessId = "";
-    	LinkedList<LinkedList<String>> allReviews = new LinkedList<LinkedList<String>>();
     	LinkedList<String> reviews = new LinkedList<String>();
+    	LinkedList<String> googleReplies = new LinkedList<String>();
+    	// Each LinkedList with have the entities for that restaurant
+    	// IE for there will a LinkedList of 10 LinkedLists of entities
+    	LinkedList<LinkedList<EntityClass>> entities = new LinkedList<LinkedList<EntityClass>>();
+    	LinkedList<EntityClass> temp = new LinkedList<EntityClass>();
     	// Get all of the reviews for each business
 		for (int i = 0; i < TEST_RESTAURANTS.length; i ++)
     	{
     		businessId = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
     		reviews = backend.GetReviews(businessId, reviewScanner);
-    		allReviews.add(backend.EliminateQuotes(reviews));
+    		reviews = backend.EliminateQuotes(reviews);
+    		googleReplies = backend.QueryGoogleApi(reviews);
+    		temp.clear();
+    		for (int j = 0; j < googleReplies.size(); j ++)
+    		{
+    			temp.addAll(backend.GetEntities(googleReplies.get(j), reviews.get(j)));
+    		}
+    		entities.add(temp);
     	}
 		
+		// Get the menu for each restaurant
+		
 		//int numLevenstein = GetLevensteinMatches(allReviews);
-    	
+		
+		
+    	backend.CleanUp(scanners);
     }
     
     public static boolean LevensteinEditDistance(String str1, String str2, int distance)
@@ -114,11 +129,113 @@ public class TestMatching
     		}
     	}
     	        
-        if (matrix[len1][len2] > distance)
+        if (matrix[len1][len2] <= distance)
         {
-        	return false;
+        	return true;
         }
-        return true;
+        return false;
+    }
+    
+    public static boolean JaroSimilarity(String str1, String str2, double maxAmt)
+    {
+    	str1 = str1.toLowerCase();
+    	str2 = str2.toLowerCase();
+    	
+    	int len1 = str1.length();
+    	int len2 = str2.length();
+    	
+    	int matchDist = (int) Math.floor(Math.max(len1, len2) / 2) - 1;
+    	double num1Matching = 0;
+    	double num2Matching = 0;
+    	double numTranspositions = 0;
+    	
+    	String str1Matches = "";
+    	String str2Matches = "";
+    	
+    	// Go through each letter of the first word
+    	for (int i = 0; i < len1; i ++)
+    	{
+    		// Find if it matches with any letter within matchDist in the other word
+    		for (int j = 0; j < matchDist + 1; j ++)
+    		{
+    			// Make sure we are in bounds for the other word
+    			if (i + j < len2)
+    			{
+    				if (str1.charAt(i) == str2.charAt(i + j))
+        			{
+        				str1Matches += str1.charAt(i);
+        				num1Matching ++;
+        				break;
+        			}
+    			}
+    			if ((i - j > 0) && (i - j < len2))
+    			{
+    				if (str1.charAt(i) == str2.charAt(i - j))
+        			{
+        				str1Matches += str1.charAt(i);
+        				num1Matching ++;
+        				break;
+        			}
+    			}
+    		}
+    	}
+    	
+    	// Go through each letter of the second word
+    	for (int i = 0; i < len2; i ++)
+    	{
+    		// Find if it matches with any letter within matchDist in the other word
+    		for (int j = 0; j < matchDist + 1; j ++)
+    		{
+    			// Make sure we are in bounds for the other word
+    			if (i + j < len1)
+    			{
+    				if (str2.charAt(i) == str1.charAt(i + j))
+        			{
+        				str2Matches += str2.charAt(i);
+        				num2Matching ++;
+        				break;
+        			}
+    			}
+    			if ((i - j > 0) && (i - j < len1))
+    			{
+    				if (str2.charAt(i) == str1.charAt(i - j))
+        			{
+        				str2Matches += str2.charAt(i);
+        				num2Matching ++;
+        				break;
+        			}
+    			}
+    		}
+    	}
+    	
+    	double temp = num1Matching;
+    	int index;
+    	while (temp > 0)
+    	{
+    		if (str1Matches.charAt(0) == str2Matches.charAt(0))
+    		{
+    			str2Matches = str2Matches.substring(1);
+    		}
+    		else
+    		{
+    			index = str2Matches.indexOf(str1Matches.charAt(0));
+    			str2Matches = str2Matches.substring(0, index) + str2Matches.substring(index + 1);
+    			numTranspositions ++;
+    		}
+    		str1Matches = str1Matches.substring(1);
+    		temp --;
+    	}
+    	
+    	double metric = (num1Matching / len1 + num2Matching / len2 + (num1Matching - numTranspositions) / num1Matching) / 3.0;
+    	System.out.println(metric);
+    	
+    	if (metric >= maxAmt)
+    	{
+    		System.out.println("True");
+    		return true;
+    	}
+    	System.out.println("False");
+    	return false;
     }
 }
 

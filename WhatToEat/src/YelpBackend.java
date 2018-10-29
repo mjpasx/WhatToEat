@@ -10,13 +10,14 @@ public class YelpBackend
 {
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
-    static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
-    //static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+    //static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
+    static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {
     	BackendClass backend = new BackendClass();
     	
+    	// Scanners to open the businesses and reviews files and to scan input
     	LinkedList<Scanner> scanners = new LinkedList<Scanner>();
         Scanner inputScanner = new Scanner(System.in);
         scanners.add(inputScanner);
@@ -27,6 +28,7 @@ public class YelpBackend
         Scanner reviewScanner = new Scanner(reviewFile);
         scanners.add(reviewScanner);
 
+        // Find the business ID corresponding to the name
         System.out.println("Enter the restaurant name: ");
         String restName = inputScanner.nextLine();
         //String venueId = FindVenueID(restName);
@@ -38,6 +40,7 @@ public class YelpBackend
             backend.CleanUp(scanners);
             return;
         }
+        // Get all the reviews about the specific restaurant
         LinkedList<String> reviews = backend.GetReviews(businessId, reviewScanner);
         if (reviews.size() == 0)
         {
@@ -52,6 +55,7 @@ public class YelpBackend
         	System.out.println("\n\n\n\n\n\n");
         }
 
+        // Escape quotes in reviews which were causing errors with Google API
         reviews = backend.EliminateQuotes(reviews);
 
         System.out.println("There are " + reviews.size() + " reviews for this place");
