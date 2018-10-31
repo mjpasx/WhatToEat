@@ -1,15 +1,8 @@
-body {
-  padding-top: 54px;
-}
-
 .checked {
     color: orange;
 }
 
 @media (min-width: 992px) {
-  body {
-    padding-top: 56px;
-  }
 }
 
 .portfolio-item {
