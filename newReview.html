@@ -13,21 +13,33 @@
     <div class="container">
   	<div class="row">
           <div class="col-sm-6 col-sm-offset-3">
-            <h1>What to Eat</h1>
-            <h4>yum yum yum</h4>
+            <img src="img/logo.png" class="center-block" alt="logo" />
+            <h2 align="center">Submit a review for a dish!</h2>
+            <br>
+            <br>
               <form>
                 <div class="form-group">
                   <label for="dishName">Name of Dish</label>
-                  <input type="text" class="form-control" placeholder="Pad Thai">
+                  <input type="text" class="form-control">
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                  <label class="form-check-label" for="inlineRadio1">1</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                  <label class="form-check-label" for="inlineRadio2">2</label>
-                </div>
+                <label for="exampleFormControlFile1">Select a review 1-5, where 1 is would not recommend and 5 is the best meal you've had!</label>
+                  <form>
+                    <label class="radio-inline">
+                      <input type="radio" name="optradio" checked> 1
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="optradio"> 2
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="optradio"> 3
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="optradio"> 4
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="optradio"> 5
+                    </label>
+                  </form>
 
                 <div class="form-group">
                    <label for="exampleFormControlFile1">Upload Photo</label>
@@ -37,7 +49,7 @@
                   <label for="exampleFormControlFile1">Comments</label>
                   <textarea class="form-control" rows="5" id="comment"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-success">Submit</button>
               </form>
           </div>
   	</div>
