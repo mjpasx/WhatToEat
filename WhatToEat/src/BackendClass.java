@@ -125,10 +125,6 @@ public class BackendClass
 
         		//return null;
         	}
-        	finally
-        	{
-        		System.out.println("Finally");
-        	}
     	}
     	return sentimentAnalysis;
     }
@@ -136,7 +132,6 @@ public class BackendClass
     public LinkedList<EntityClass> GetEntities(String review, String revText) throws ParseException
     {
     	LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
-    	EntityClass object = new EntityClass();
     	JSONObject entityObj;
     	String name;
     	Object sentiment;
@@ -149,6 +144,7 @@ public class BackendClass
         JSONArray ents = (JSONArray) reviewObj.get("entities");
         for (int i = 0; i < ents.size(); i ++)
         {
+        	EntityClass object = new EntityClass();
         	entityObj = (JSONObject) ents.get(i);
         	name = (String) entityObj.get("name");
         	sentiment = entityObj.get("sentiment");
@@ -167,7 +163,7 @@ public class BackendClass
         	object.SetReview(revText);
         	entities.add(object);
         }
-    	
+
     	return entities;
     }
 

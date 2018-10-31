@@ -67,10 +67,17 @@ public class YelpBackend
         {
         	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i)));
         }
-        
-        System.out.println(entities.get(0).GetSentiment());
-        System.out.println(entities.get(0).GetWord());
-        System.out.println(entities.get(0).GetReview());
+                
+        //System.out.println(entities.get(0).GetSentiment());
+        //System.out.println(entities.get(0).GetWord());
+        //System.out.println(entities.get(0).GetReview());
+        for (int i = 0; i < entities.size(); i ++)
+        {
+        	System.out.println(entities.get(i).GetSentiment());
+        	System.out.println(entities.get(i).GetWord());
+        	System.out.println("\n");
+            //System.out.println(entities.get(i).GetReview());
+        }
 
         backend.CleanUp(scanners);
     }
