@@ -60,9 +60,11 @@ public class YelpBackend
 
         System.out.println("There are " + reviews.size() + " reviews for this place");
 
+        // Send the reviews to Google API and receive the response
         LinkedList<String> sentimentAnalysis = backend.QueryGoogleApi(reviews);
-        LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
         
+        // Parse the Google response to get all of the entities
+        LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
         for (int i = 0; i < sentimentAnalysis.size(); i ++)
         {
         	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i)));
@@ -75,8 +77,8 @@ public class YelpBackend
         {
         	System.out.println(entities.get(i).GetSentiment());
         	System.out.println(entities.get(i).GetWord());
-        	System.out.println("\n");
             //System.out.println(entities.get(i).GetReview());
+        	System.out.println("\n");
         }
 
         backend.CleanUp(scanners);

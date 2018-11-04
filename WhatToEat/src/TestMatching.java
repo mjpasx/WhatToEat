@@ -19,9 +19,12 @@ public class TestMatching
   	
     
     static final String[] MATCHING_ALGS = {
-    	"Levenstein Edit Distance"
+    	"Case Insensitive Matching",
+    	"Levenstein Edit Distance",
+    	"Jaro Similarity Metric"
     };
     
+    // Restaurants that we'll use to test
     static final String[] TEST_RESTAURANTS = {
 		"Tokyo Kitchen",
 		"Wing's Express",
@@ -34,6 +37,11 @@ public class TestMatching
 		"Westside Bistro",
 		"Lumiere French Kitchen"
     };
+    
+    // Per review, LinkedList of items (entities) we should (hope to) match
+    // Per restaurant, LinkedList of reviews
+    // Overall, LinkedList of all the restaurants
+    static LinkedList<LinkedList<LinkedList<EntityClass>>> GOAL_MATCHES = new LinkedList<LinkedList<LinkedList<EntityClass>>>();
     
     /*  
      *  TEST RESTAURANTS (How many meals we could match at most)
@@ -54,6 +62,7 @@ public class TestMatching
     {    	
     	BackendClass backend = new BackendClass();
     	
+    	// Open up scanners to read from the files
     	LinkedList<Scanner> scanners = new LinkedList<Scanner>();
     	File businessFile = new File(BUSINESS_PATH);
         Scanner businessScanner = new Scanner(businessFile);
@@ -65,34 +74,52 @@ public class TestMatching
         String businessId = "";
     	LinkedList<String> reviews = new LinkedList<String>();
     	LinkedList<String> googleReplies = new LinkedList<String>();
-    	// Each LinkedList with have the entities for that restaurant
-    	// IE for there will a LinkedList of 10 LinkedLists of entities
-    	LinkedList<LinkedList<EntityClass>> entities = new LinkedList<LinkedList<EntityClass>>();
-    	LinkedList<EntityClass> temp = new LinkedList<EntityClass>();
+
+    	LinkedList<EntityClass> perReview = new LinkedList<EntityClass>();
+    	LinkedList<LinkedList<EntityClass>> perRestaurant = new LinkedList<LinkedList<EntityClass>>();
     	// Get all of the reviews for each business
 		for (int i = 0; i < TEST_RESTAURANTS.length; i ++)
     	{
+			// Get the business ID, then the reviews, and send them to Google
     		businessId = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
     		reviews = backend.GetReviews(businessId, reviewScanner);
     		reviews = backend.EliminateQuotes(reviews);
     		googleReplies = backend.QueryGoogleApi(reviews);
-    		temp.clear();
+    		
+    		perRestaurant.clear();
+    		
+    		// Get the entities from each review and add to that restaurant's entity list
     		for (int j = 0; j < googleReplies.size(); j ++)
     		{
-    			temp.addAll(backend.GetEntities(googleReplies.get(j), reviews.get(j)));
+    			perReview = backend.GetEntities(googleReplies.get(j), reviews.get(j));
+    			perRestaurant.add(perReview);
     		}
-    		entities.add(temp);
+    		// Add the restaurant's entities to the overall entity list
+    		GOAL_MATCHES.add(perRestaurant);
     	}
 		
-		// Get the menu for each restaurant
+		// Get the menu and menu items for each restaurant
 		
-		//int numLevenstein = GetLevensteinMatches(allReviews);
+		// Count the matches we get for each matching algorithm
+		
+		// Calculate the precision/recall/F1 score for each
+		
+		// Output some sort of table
 		
 		
     	backend.CleanUp(scanners);
     }
     
-    public static boolean LevensteinEditDistance(String str1, String str2, int distance)
+    public static boolean CaseInsensitiveMatch(String str1, String str2)
+    {
+    	// Check if the strings are exactly eqaul
+    	str1 = str1.toLowerCase();
+    	str2 = str2.toLowerCase();
+    	
+    	return str1.equals(str2);
+    }
+    
+    public static boolean LevensteinEditDistance(String str1, String str2, int maxDistance)
     {
     	str1 = str1.toLowerCase();
     	str2 = str2.toLowerCase();
@@ -112,6 +139,7 @@ public class TestMatching
     		matrix[0][i] = i;
     	}
     	
+    	// Go through the rest of the strings
     	for (int j = 1; j < len2 + 1; j ++)
     	{
     		for (int i = 1; i < len1 + 1; i ++)
@@ -129,10 +157,12 @@ public class TestMatching
     		}
     	}
     	        
-        if (matrix[len1][len2] <= distance)
+    	// Return true if the edit distance is not greater than the max distance
+        if (matrix[len1][len2] <= maxDistance)
         {
         	return true;
         }
+        // False otherwise
         return false;
     }
     
@@ -161,6 +191,7 @@ public class TestMatching
     			// Make sure we are in bounds for the other word
     			if (i + j < len2)
     			{
+    				// If we have a matching character moving forward
     				if (str1.charAt(i) == str2.charAt(i + j))
         			{
         				str1Matches += str1.charAt(i);
@@ -170,6 +201,7 @@ public class TestMatching
     			}
     			if ((i - j > 0) && (i - j < len2))
     			{
+    				// If we have a matching character moving backwards
     				if (str1.charAt(i) == str2.charAt(i - j))
         			{
         				str1Matches += str1.charAt(i);
@@ -189,6 +221,7 @@ public class TestMatching
     			// Make sure we are in bounds for the other word
     			if (i + j < len1)
     			{
+    				// If we have a matching character moving forward
     				if (str2.charAt(i) == str1.charAt(i + j))
         			{
         				str2Matches += str2.charAt(i);
@@ -198,6 +231,7 @@ public class TestMatching
     			}
     			if ((i - j > 0) && (i - j < len1))
     			{
+    				// If we have a matching character moving backwards
     				if (str2.charAt(i) == str1.charAt(i - j))
         			{
         				str2Matches += str2.charAt(i);
@@ -210,6 +244,7 @@ public class TestMatching
     	
     	double temp = num1Matching;
     	int index;
+    	// Get the number of transpositions between the matching letters
     	while (temp > 0)
     	{
     		if (str1Matches.charAt(0) == str2Matches.charAt(0))
@@ -226,14 +261,17 @@ public class TestMatching
     		temp --;
     	}
     	
+    	// Calculate the total Jaro score
     	double metric = (num1Matching / len1 + num2Matching / len2 + (num1Matching - numTranspositions) / num1Matching) / 3.0;
     	System.out.println(metric);
     	
+    	// If the metric is at least as high as given amount, return True
     	if (metric >= maxAmt)
     	{
     		System.out.println("True");
     		return true;
     	}
+    	// False otherwise 
     	System.out.println("False");
     	return false;
     }

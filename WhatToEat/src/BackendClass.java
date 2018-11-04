@@ -45,11 +45,13 @@ public class BackendClass
             Object obj = new JSONParser().parse(line);
             JSONObject businessObj = (JSONObject) obj;
             String name = (String) businessObj.get("name");
+            // If you get a matching business name, then return the business ID
             if (name.equals(restName))
             {
             	return (String) businessObj.get("business_id");
             }
         }
+        // Return null if we don't have a matching business
         return null;
     }
 
@@ -62,17 +64,21 @@ public class BackendClass
             Object obj = new JSONParser().parse(line);
             JSONObject reviewObj = (JSONObject) obj;
             String id = (String) reviewObj.get("business_id");
+            // If you get a matching business ID, add it to the list
             if (businessId.equals(id))
             {
             	reviews.add((String) reviewObj.get("text"));
             }
         }
+        // Return all the reviews at the end
     	return reviews;
     }
 
     public LinkedList<String> EliminateQuotes(LinkedList<String> reviews)
     {
     	String text = "";
+    	// Within each review, escape all quotes
+    	// Need to do this for the Google API calls to work
     	for (int i = 0; i < reviews.size(); i ++)
     	{
     		text = reviews.get(i);
@@ -84,6 +90,7 @@ public class BackendClass
 
     public LinkedList<String> QueryGoogleApi(LinkedList<String> reviews)
     {
+    	// Get the API key from the environment
     	String apiKey = System.getenv("API_KEY");
     	LinkedList<String> sentimentAnalysis = new LinkedList<String>();
     	System.out.println(reviews.size());
@@ -91,12 +98,15 @@ public class BackendClass
     	{
     		try
         	{
+    			// Set up a connection with Google API
         		URL url = new URL(GOOGLE_URL + apiKey);
             	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+            	// Construct the POST message
             	connection.setRequestMethod("POST");
             	connection.setRequestProperty("Content-Type", "application/json");
             	connection.setDoOutput(true);
+            	// Write the request to Google
             	OutputStream os = connection.getOutputStream();
             	OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
             	osw.write(REQUEST_BEG + reviews.get(i) + REQUEST_END);
@@ -105,6 +115,7 @@ public class BackendClass
             	os.close();
             	connection.connect();
 
+            	// Read in the response
             	String reply;
             	BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
             	ByteArrayOutputStream buf = new ByteArrayOutputStream();
@@ -113,11 +124,13 @@ public class BackendClass
             	    buf.write((byte) result);
             	    result = inputStream.read();
             	}
+            	// Turn the message into a string
             	reply = buf.toString();
             	System.out.println(reply);
             	System.out.println("\n\n\n\n\n");
             	sentimentAnalysis.add(reply);
         	}
+    		// Catch if there is an error
         	catch(Exception e)
         	{
         		System.out.println("Error.");
@@ -126,6 +139,7 @@ public class BackendClass
         		//return null;
         	}
     	}
+    	// Return all of the sentiment analysis results
     	return sentimentAnalysis;
     }
     
@@ -139,17 +153,22 @@ public class BackendClass
     	Object mag;
     	double magnitude;
     	
+    	// Turn the object into a JSON object
     	Object obj = new JSONParser().parse(review);
         JSONObject reviewObj = (JSONObject) obj;
+        // Get the entities array, iterate through it
         JSONArray ents = (JSONArray) reviewObj.get("entities");
         for (int i = 0; i < ents.size(); i ++)
         {
         	EntityClass object = new EntityClass();
         	entityObj = (JSONObject) ents.get(i);
+        	// Get the name field from each object
         	name = (String) entityObj.get("name");
+        	// From the sentiment object within the entity, get the sentiment score
         	sentiment = entityObj.get("sentiment");
         	sentimentObj = (JSONObject) sentiment;
         	mag = sentimentObj.get("score");
+        	// Need to convert to to a double (sometimes comes as a long, sometimes a double)
         	if (mag instanceof Long)
         	{
         		magnitude = ((Long) mag).doubleValue();
@@ -158,6 +177,7 @@ public class BackendClass
         	{
         		magnitude = (double) mag;
         	}
+        	// Add the new entity object
         	object.SetWord(name);
         	object.SetSentiment(magnitude);
         	object.SetReview(revText);
