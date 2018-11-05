@@ -2,8 +2,12 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+
 import org.json.simple.JSONObject; 
 import org.json.simple.parser.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class TestMatching
@@ -60,6 +64,8 @@ public class TestMatching
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {    	
+    	
+    	/*
     	BackendClass backend = new BackendClass();
     	
     	// Open up scanners to read from the files
@@ -108,6 +114,7 @@ public class TestMatching
 		
 		
     	backend.CleanUp(scanners);
+    	*/
     }
     
     public static boolean CaseInsensitiveMatch(String str1, String str2)
@@ -166,7 +173,7 @@ public class TestMatching
         return false;
     }
     
-    public static boolean JaroSimilarity(String str1, String str2, double maxAmt)
+    public static boolean JaroSimilarity(String str1, String str2, double minAmt)
     {
     	str1 = str1.toLowerCase();
     	str2 = str2.toLowerCase();
@@ -266,7 +273,7 @@ public class TestMatching
     	System.out.println(metric);
     	
     	// If the metric is at least as high as given amount, return True
-    	if (metric >= maxAmt)
+    	if (metric >= minAmt)
     	{
     		System.out.println("True");
     		return true;
@@ -274,6 +281,82 @@ public class TestMatching
     	// False otherwise 
     	System.out.println("False");
     	return false;
+    }
+    
+    public static boolean JaccardSimilarity(String[] str1, String[] str2, double minAmt)
+    {
+    	// Turn the tokens into sets
+    	HashSet<String> str1Tokens = new HashSet<String>(Arrays.asList(str1));
+    	HashSet<String> str2Tokens = new HashSet<String>(Arrays.asList(str2));
+    	
+    	// Get the intersection of the tokens
+    	HashSet<String> intersection = new HashSet<String>(str1Tokens);
+    	intersection.retainAll(str2Tokens);
+    	
+    	// Get the union of the tokens
+    	HashSet<String> union = new HashSet<String>(str1Tokens);
+    	union.addAll(str2Tokens);
+    	
+    	System.out.println(intersection.size());
+    	System.out.println(union.size());
+    	
+    	// Calculate the similarity
+    	double similarity = ((double) intersection.size()) / ((double) union.size());
+    	System.out.println(similarity);
+    	
+    	// Return true if similarity is greater than the min amount acceptable
+    	if (similarity >= minAmt)
+    	{
+    		return true;
+    	}
+    	// False otherwise
+    	return false;
+    }
+    
+    public static String[] Tokenize(String str, int ngramLen, boolean asWords)
+    {
+    	// Remove punctuation
+    	str = RemovePunct(str);
+    	
+    	// If tokenizing as words, then split on spaces
+    	if (asWords)
+    	{
+    		return str.split(" ");
+    	}
+    	
+    	LinkedList<String> tokens = new LinkedList<String>();
+    	String token = "";
+    	// Iterate through the string to split it up into ngrams
+    	for (int i = 0; i < str.length() - ngramLen + 1; i ++)
+    	{
+    		token = str.substring(i, i + ngramLen);
+    		tokens.add(token);
+    	}
+    	
+    	// Convert to a String[]
+    	String[] tokensArr = tokens.toArray(new String[tokens.size()]);
+    	return tokensArr;
+    }
+    
+    public static String RemovePunct(String str)
+    {
+    	// Remove all the punctuation from the strings
+    	str.replaceAll(".", "");
+    	str.replaceAll(",", "");
+    	str.replaceAll("'", "");
+    	str.replaceAll(":", "");
+    	str.replaceAll("!", "");
+    	str.replaceAll("\\?", "");
+    	str.replaceAll("@", "");
+    	str.replaceAll("#", "");
+    	str.replaceAll("$", "");
+    	str.replaceAll("&", "");
+    	str.replaceAll("\\(", "");
+    	str.replaceAll("\\)", "");
+    	str.replaceAll(";", "");
+    	str.replaceAll("\"", "");
+    	
+    	return str;
     }
 }
 
