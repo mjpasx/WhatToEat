@@ -69,6 +69,11 @@ public class YelpBackend
         {
         	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i)));
         }
+        
+        //Testing the Open Menu Search
+        LinkedList<String> restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
+        System.out.println(restaurantInfo);
+        
                 
         //System.out.println(entities.get(0).GetSentiment());
         //System.out.println(entities.get(0).GetWord());

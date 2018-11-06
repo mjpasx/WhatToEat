@@ -20,9 +20,9 @@ public class BackendClass
     private final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key=";
     private final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
     private final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
-    private final String FOURSQUARE_MENU_URL = "https://api.foursquare.com/v2/venues/VENUE_ID/menu";
-  	private final String FOURSQUARE_VENUEID_URL = "https://api.foursquare.com/v2/venues/search?venues/search?near=";
-
+    private final String OPENMENU_SEARCH_URL = "https://openmenu.com/api/v2/search.php?key=";
+    private final String OPENMENU_RESTAURANT_URL ="";
+    
   	public BackendClass()
   	{
   		
@@ -143,6 +143,50 @@ public class BackendClass
     	return sentimentAnalysis;
     }
     
+    public LinkedList<String> QueryOpenMenuSearch(String restName, String city)
+    {
+    	// Get the API key from the environment
+    	String apiKey = System.getenv("OPENMENU_API");
+    	LinkedList<String> restaurantInfo = new LinkedList<String>();
+    	String country = "US";
+  
+	try
+	{
+		// Set up a connection with Google API
+    		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restName + "&city=" + city + "&country" + country);
+        	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        	// Construct the POST message
+        	connection.setRequestMethod("POST");
+        	connection.setRequestProperty("Content-Type", "application/json");
+        	connection.setDoOutput(true);
+        	connection.connect();
+
+        	// Read in the response
+        	String reply;
+        	BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
+        	ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        	int result = inputStream.read();
+        	while(result != -1) {
+        	    buf.write((byte) result);
+        	    result = inputStream.read();
+        	}
+        	// Turn the message into a string
+        	reply = buf.toString();
+        	System.out.println(reply);
+        	System.out.println("\n\n\n\n\n");
+        	restaurantInfo.add(reply);
+	}
+    		// Catch if there is an error
+        	catch(Exception e)
+        	{
+        		System.out.println("Error.");
+        		System.out.println(e);
+        	}
+		return restaurantInfo;
+    	}
+  
+    
     public LinkedList<EntityClass> GetEntities(String review, String revText) throws ParseException
     {
     	LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
@@ -186,100 +230,4 @@ public class BackendClass
 
     	return entities;
     }
-
-	/**
-	 * curl call
-	 * curl -X GET -G \
-		  'https://api.foursquare.com/v2/venues/explore' \
-		    -d client_id="CLIENT_ID" \
-		    -d client_secret="CLIENT_SECRET" \
-		    -d near = ""\
-		    -d query = "" \
-		    -d limit = 1
-	 */
-	public String FindVenueID(String restName) {
-		String client_id = System.getenv("FOURSQUARE_CLIENT_KEY");
-		String client_secret = System.getenv("FOURSQUARE_CLIENT_SECRET");
-		String reply;
-			try {
-				URL url = new URL(FOURSQUARE_VENUEID_URL);
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-				connection.setRequestMethod("GET");
-				connection.setRequestProperty("Content-Type", "application/json");
-				connection.setDoOutput(true);
-				OutputStream os = connection.getOutputStream();
-				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-				osw.write(url + restName + "CLIENT_ID" + client_id + "CLIENT_SECRET" + client_secret);
-				osw.flush();
-				osw.close();
-				os.close();
-				connection.connect();
-				BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
-				ByteArrayOutputStream buf = new ByteArrayOutputStream();
-				int result = inputStream.read();
-				while (result != -1) {
-					buf.write((byte) result);
-					result = inputStream.read();
-				}
-				reply = buf.toString();
-				System.out.println(reply);
-			} catch (Exception e) {
-				System.out.println("Error.");
-				System.out.println(e);
-
-				return null;
-			} finally {
-				System.out.println("Finally");
-			}
-			return reply;
-		}
-
-		/**
-		 * curl call
-		 * curl -X GET -G \
-			  'https://api.foursquare.com/v2/VENUE_ID/menu' \
-			    -d client_id="CLIENT_ID" \
-			    -d client_secret="CLIENT_SECRET" \
-			    -d venue_id=""\
-			    -d limit = 1
-		 */
-	public String QueryMenu(String venueID) {
-		String client_id = System.getenv("FOURSQUARE_CLIENT_KEY");
-		String client_secret = System.getenv("FOURSQUARE_CLIENT_SECRET");
-		String reply;
-			try {
-				URL url = new URL(FOURSQUARE_MENU_URL);
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-				connection.setRequestMethod("GET");
-				connection.setRequestProperty("Content-Type", "application/json");
-				connection.setDoOutput(true);
-				OutputStream os = connection.getOutputStream();
-				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-				osw.write(url + venueID + "/menu" + "CLIENT_ID" + client_id + "CLIENT_SECRET" + client_secret);
-				osw.flush();
-				osw.close();
-				os.close();
-				connection.connect();
-
-				BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
-				ByteArrayOutputStream buf = new ByteArrayOutputStream();
-				int result = inputStream.read();
-				while (result != -1) {
-					buf.write((byte) result);
-					result = inputStream.read();
-				}
-				reply = buf.toString();
-				System.out.println(reply);
-			} catch (Exception e) {
-				System.out.println("Error.");
-				System.out.println(e);
-
-				return null;
-			} finally {
-				System.out.println("Finally");
-			}
-			return reply;
-		}
 }
