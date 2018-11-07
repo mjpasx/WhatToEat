@@ -143,7 +143,49 @@ public class BackendClass
     	return sentimentAnalysis;
     }
     
-    public LinkedList<String> QueryOpenMenuSearch(String restName, String city)
+    public LinkedList<String> GrabMenu(String restaurantID) {
+    	
+    	String apiKey = System.getenv("OPENMENU_API");
+    	LinkedList<String> menu = new LinkedList<String>();
+    	try
+    	{
+    		// Set up a connection with Google API
+        		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&id=" + restaurantID);
+            	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            	// Construct the POST message
+            	connection.setRequestMethod("GET");
+            	connection.setRequestProperty("Content-Type", "application/json");
+            	connection.setDoOutput(true);
+            	connection.connect();
+
+            	// Read in the response
+            	String reply;
+            	BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
+            	ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            	int result = inputStream.read();
+            	while(result != -1) {
+            	    buf.write((byte) result);
+            	    result = inputStream.read();
+            	}
+            	
+            	// Turn the message into a string
+            	reply = buf.toString();
+            	System.out.println(reply);
+            	System.out.println("\n\n\n\n\n");
+            	menu.add(reply);
+    			}
+    	
+        		// Catch if there is an error
+            	catch(Exception e)
+            	{
+            		System.out.println("Error.");
+            		System.out.println(e);
+            	}
+    		return menu;
+    }
+    
+    public LinkedList<String> QueryOpenMenuSearch(String restaurantName, String city)
     {
     	// Get the API key from the environment
     	String apiKey = System.getenv("OPENMENU_API");
@@ -153,11 +195,11 @@ public class BackendClass
 	try
 	{
 		// Set up a connection with Google API
-    		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restName + "&city=" + city + "&country" + country);
+    		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restaurantName + "&city=" + city + "&country" + country);
         	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         	// Construct the POST message
-        	connection.setRequestMethod("POST");
+        	connection.setRequestMethod("GET");
         	connection.setRequestProperty("Content-Type", "application/json");
         	connection.setDoOutput(true);
         	connection.connect();
