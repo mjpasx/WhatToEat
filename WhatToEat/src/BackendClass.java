@@ -272,4 +272,47 @@ public class BackendClass
 
     	return entities;
     }
+    
+    public LinkedList<String> GetMenuItems(String restInfo) throws ParseException
+    {
+    	LinkedList<String> items = new LinkedList<String>();
+    	// Get the "response"
+    	Object obj = new JSONParser().parse(restInfo);
+        JSONObject reviewObj = (JSONObject) obj;
+    	// From that get "result"
+        JSONObject response = (JSONObject) reviewObj.get("response");
+        JSONObject result = (JSONObject) response.get("result");
+    	// From that get the "menus" JSON object array
+        JSONArray menus = (JSONArray) result.get("menus");
+        
+        JSONObject menu;
+        JSONArray menuGroups;
+        JSONObject menuGroup;
+        JSONArray menuItems;
+        JSONObject item;
+        String itemName;
+        
+    	// For each menu, go to "menu_groups"
+        for (int i = 0; i < menus.size(); i ++)
+        {
+        	menu = (JSONObject) menus.get(i);
+        	menuGroups = (JSONArray) menu.get("menu_groups");
+        	// Within each menu group, get the "menu_items" JSON array
+        	for (int j = 0; j < menuGroups.size(); j ++)
+        	{
+        		menuGroup = (JSONObject) menuGroups.get(j);
+        		menuItems = (JSONArray) menuGroup.get("menu_items");
+    			// For each menu item, get the "menu_item_name"
+            	for (int k = 0; k < menuItems.size(); k ++)
+            	{
+            		item = (JSONObject) menuItems.get(k);
+            		itemName = (String) item.get("menu_item_name");
+            		items.add(itemName);
+            	}
+        	}
+        }
+    	
+    	return items;
+    		
+    }
 }
