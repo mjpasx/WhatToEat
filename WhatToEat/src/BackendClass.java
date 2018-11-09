@@ -20,8 +20,7 @@ public class BackendClass
     private final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key=";
     private final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
     private final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
-    private final String OPENMENU_SEARCH_URL = "https://openmenu.com/api/v2/search.php?key=";
-    private final String OPENMENU_RESTAURANT_URL ="";
+    private final String OPENMENU_URL = "https://openmenu.com/api/v2/search.php?key=";
     
   	public BackendClass()
   	{
@@ -150,7 +149,7 @@ public class BackendClass
     	try
     	{
     		// Set up a connection with Google API
-        		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&id=" + restaurantID);
+        		URL url = new URL(OPENMENU_URL + apiKey + "&id=" + restaurantID);
             	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             	// Construct the POST message
@@ -195,7 +194,7 @@ public class BackendClass
 	try
 	{
 		// Set up a connection with Google API
-    		URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restaurantName + "&city=" + city + "&country" + country);
+    		URL url = new URL(OPENMENU_URL + apiKey + "&s=" + restaurantName + "&city=" + city + "&country" + country);
         	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         	// Construct the POST message
