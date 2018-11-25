@@ -147,7 +147,7 @@ public class TestMatching
         Scanner reviewScanner = new Scanner(reviewFile);
         scanners.add(reviewScanner);
         
-        String businessId = "";
+        RestaurantClass business = new RestaurantClass();
     	ArrayList<String> reviews = new ArrayList<String>();
     	ArrayList<String> googleReplies = new ArrayList<String>();
 
@@ -158,7 +158,8 @@ public class TestMatching
 			/*
 			
 			// Get the business ID, then the reviews, and send them to Google
-    		businessId = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
+    		business = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
+    		businessId = business.GetId();
     		reviews = backend.GetReviews(businessId, reviewScanner);
     		reviews = backend.EliminateQuotes(reviews);
     		
@@ -189,7 +190,7 @@ public class TestMatching
     		for (int j = 0; j < googleReplies.size(); j ++)
     		{
     			ArrayList<EntityClass> perReview = new ArrayList<EntityClass>();
-    			perReview = backend.GetEntities(googleReplies.get(j), reviews.get(j));
+    			perReview = backend.GetEntities(googleReplies.get(j), reviews.get(j), business);
     			perRestaurant.add(perReview);
     		}
     		// Add the restaurant's entities to the overall entity list

@@ -36,7 +36,7 @@ public class BackendClass
     	}
     }
 
-    public String FindBusinessId(String restName, Scanner businessScanner) throws FileNotFoundException, ParseException
+    public RestaurantClass FindBusinessId(String restName, Scanner businessScanner) throws FileNotFoundException, ParseException
     {
         while (businessScanner.hasNextLine())
         {
@@ -47,7 +47,11 @@ public class BackendClass
             // If you get a matching business name, then return the business ID
             if (name.equals(restName))
             {
-            	return (String) businessObj.get("business_id");
+            	RestaurantClass restaurant = new RestaurantClass();
+            	restaurant.SetId((String) businessObj.get("business_id"));
+            	restaurant.SetRestName(restName);
+            	restaurant.SetZipCode((String) businessObj.get("postal_code"));
+            	return restaurant;
             }
         }
         // Return null if we don't have a matching business
@@ -228,7 +232,7 @@ public class BackendClass
     	}
   
     
-    public ArrayList<EntityClass> GetEntities(String review, String revText) throws ParseException
+    public ArrayList<EntityClass> GetEntities(String review, String revText, RestaurantClass restaurant) throws ParseException
     {
     	ArrayList<EntityClass> entities = new ArrayList<EntityClass>();
     	JSONObject entityObj;
@@ -266,8 +270,8 @@ public class BackendClass
         	object.SetWord(name);
         	object.SetSentiment(magnitude);
         	object.SetReview(revText);
-        	//object.SetRestName();
-        	//object.SetZipCode();
+        	object.SetRestName(restaurant.GetRestName());
+        	object.SetZipCode(restaurant.GetZipCode());
         	entities.add(object);
         }
 
