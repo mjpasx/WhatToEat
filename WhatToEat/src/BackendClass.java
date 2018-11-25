@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
@@ -27,7 +27,7 @@ public class BackendClass
   		
   	}
   	
-  	public void CleanUp(LinkedList<Scanner> scanners)
+  	public void CleanUp(ArrayList<Scanner> scanners)
     {
     	// Clean up once we are done
     	for (int i = 0; i < scanners.size(); i ++)
@@ -54,9 +54,9 @@ public class BackendClass
         return null;
     }
 
-    public LinkedList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
+    public ArrayList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
     {
-    	LinkedList<String> reviews = new LinkedList<String>();
+    	ArrayList<String> reviews = new ArrayList<String>();
         while (reviewScanner.hasNextLine())
         {
             String line = reviewScanner.nextLine();
@@ -73,7 +73,7 @@ public class BackendClass
     	return reviews;
     }
 
-    public LinkedList<String> EliminateQuotes(LinkedList<String> reviews)
+    public ArrayList<String> EliminateQuotes(ArrayList<String> reviews)
     {
     	String text = "";
     	// Within each review, escape all quotes
@@ -87,11 +87,11 @@ public class BackendClass
     	return reviews;
     }
 
-    public LinkedList<String> QueryGoogleApi(LinkedList<String> reviews)
+    public ArrayList<String> QueryGoogleApi(ArrayList<String> reviews)
     {
     	// Get the API key from the environment
     	String apiKey = System.getenv("API_KEY");
-    	LinkedList<String> sentimentAnalysis = new LinkedList<String>();
+    	ArrayList<String> sentimentAnalysis = new ArrayList<String>();
     	System.out.println(reviews.size());
     	for (int i = 0; i < reviews.size(); i ++)
     	{
@@ -142,10 +142,10 @@ public class BackendClass
     	return sentimentAnalysis;
     }
     
-    public LinkedList<String> GrabMenu(String restaurantID) {
+    public ArrayList<String> GrabMenu(String restaurantID) {
     	
     	String apiKey = System.getenv("OPENMENU_API");
-    	LinkedList<String> menu = new LinkedList<String>();
+    	ArrayList<String> menu = new ArrayList<String>();
     	try
     	{
     		// Set up a connection with Google API
@@ -184,11 +184,11 @@ public class BackendClass
     		return menu;
     }
     
-    public LinkedList<String> QueryOpenMenuSearch(String restaurantName, String city)
+    public ArrayList<String> QueryOpenMenuSearch(String restaurantName, String city)
     {
     	// Get the API key from the environment
     	String apiKey = System.getenv("OPENMENU_API");
-    	LinkedList<String> restaurantInfo = new LinkedList<String>();
+    	ArrayList<String> restaurantInfo = new ArrayList<String>();
     	String country = "US";
   
 	try
@@ -228,9 +228,9 @@ public class BackendClass
     	}
   
     
-    public LinkedList<EntityClass> GetEntities(String review, String revText) throws ParseException
+    public ArrayList<EntityClass> GetEntities(String review, String revText) throws ParseException
     {
-    	LinkedList<EntityClass> entities = new LinkedList<EntityClass>();
+    	ArrayList<EntityClass> entities = new ArrayList<EntityClass>();
     	JSONObject entityObj;
     	String name;
     	Object sentiment;
@@ -266,15 +266,17 @@ public class BackendClass
         	object.SetWord(name);
         	object.SetSentiment(magnitude);
         	object.SetReview(revText);
+        	//object.SetRestName();
+        	//object.SetZipCode();
         	entities.add(object);
         }
 
     	return entities;
     }
     
-    public LinkedList<String> GetMenuItems(String restInfo) throws ParseException
+    public ArrayList<String> GetMenuItems(String restInfo) throws ParseException
     {
-    	LinkedList<String> items = new LinkedList<String>();
+    	ArrayList<String> items = new ArrayList<String>();
     	// Get the "response"
     	Object obj = new JSONParser().parse(restInfo);
         JSONObject reviewObj = (JSONObject) obj;
