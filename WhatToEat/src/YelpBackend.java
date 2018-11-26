@@ -32,17 +32,30 @@ public class YelpBackend
         System.out.println("Enter the restaurant name: ");
         String restName = inputScanner.nextLine();
         //String venueId = FindVenueID(restName);
-        RestaurantClass business = backend.FindBusinessId(restName, businessScanner);
-        if (business == null)
+        ArrayList<RestaurantClass> businesses = backend.FindBusinessId(restName, businessScanner);
+        if (businesses.size() == 0)
         {
             System.out.println("Sorry, but we do not have any data on " + restName);
             System.out.println("Please try a different restaurant, or add your own review.");
             backend.CleanUp(scanners);
             return;
         }
-        String businessId = business.GetId();
-        // Get all the reviews about the specific restaurant
-        ArrayList<String> reviews = backend.GetReviews(businessId, reviewScanner);
+        ArrayList<String> reviews = new ArrayList<String>();
+        ArrayList<String> newReviews = new ArrayList<String>();
+        int size;
+        ArrayList<RestaurantClass> reviewBusinesses = new ArrayList<RestaurantClass>();
+        for (int i = 0; i < businesses.size(); i ++)
+        {
+        	String businessId = businesses.get(i).GetId();
+            // Get all the reviews about the specific restaurant
+        	newReviews = backend.GetReviews(businessId, reviewScanner);
+        	reviews.addAll(newReviews);
+        	size = newReviews.size();
+        	for (int j = 0; j < size; j ++)
+        	{
+        		reviewBusinesses.add(businesses.get(i));
+        	}
+        }
         if (reviews.size() == 0)
         {
         	System.out.println("Sorry, we do not have any reviews for " + restName);
@@ -66,7 +79,7 @@ public class YelpBackend
         ArrayList<EntityClass> entities = new ArrayList<EntityClass>();
         for (int i = 0; i < sentimentAnalysis.size(); i ++)
         {
-        	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i), business));
+        	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i), reviewBusinesses.get(i)));
         }
         
         //Testing the Open Menu Search

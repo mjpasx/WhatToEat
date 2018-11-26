@@ -36,8 +36,9 @@ public class BackendClass
     	}
     }
 
-    public RestaurantClass FindBusinessId(String restName, Scanner businessScanner) throws FileNotFoundException, ParseException
+    public ArrayList<RestaurantClass> FindBusinessId(String restName, Scanner businessScanner) throws FileNotFoundException, ParseException
     {
+    	ArrayList<RestaurantClass> restaurants = new ArrayList<RestaurantClass>();
         while (businessScanner.hasNextLine())
         {
             String line = businessScanner.nextLine();
@@ -51,11 +52,11 @@ public class BackendClass
             	restaurant.SetId((String) businessObj.get("business_id"));
             	restaurant.SetRestName(restName);
             	restaurant.SetZipCode((String) businessObj.get("postal_code"));
-            	return restaurant;
+            	restaurants.add(restaurant);
             }
         }
-        // Return null if we don't have a matching business
-        return null;
+        // Return empty ArrayList if we don't have a matching business
+        return restaurants;
     }
 
     public ArrayList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
