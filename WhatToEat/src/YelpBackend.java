@@ -10,8 +10,6 @@ public class YelpBackend
 {
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
-    static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
-    //static final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {
@@ -24,9 +22,6 @@ public class YelpBackend
         File businessFile = new File(BUSINESS_PATH);
         Scanner businessScanner = new Scanner(businessFile);
         scanners.add(businessScanner);
-        File reviewFile = new File(REVIEWS_PATH);
-        Scanner reviewScanner = new Scanner(reviewFile);
-        scanners.add(reviewScanner);
 
         // Find the business ID corresponding to the name
         System.out.println("Enter the restaurant name: ");
@@ -48,7 +43,7 @@ public class YelpBackend
         {
         	String businessId = businesses.get(i).GetId();
             // Get all the reviews about the specific restaurant
-        	newReviews = backend.GetReviews(businessId, reviewScanner);
+        	newReviews = backend.GetReviews(businessId);
         	reviews.addAll(newReviews);
         	size = newReviews.size();
         	for (int j = 0; j < size; j ++)
