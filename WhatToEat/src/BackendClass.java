@@ -1,5 +1,6 @@
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -21,6 +22,8 @@ public class BackendClass
     private final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
     private final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
     private final String OPENMENU_URL = "https://openmenu.com/api/v2/search.php?key=";
+    private final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
+    //private final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
     
   	public BackendClass()
   	{
@@ -59,8 +62,10 @@ public class BackendClass
         return restaurants;
     }
 
-    public ArrayList<String> GetReviews(String businessId, Scanner reviewScanner) throws FileNotFoundException, ParseException
+    public ArrayList<String> GetReviews(String businessId) throws FileNotFoundException, ParseException
     {
+    	File reviewFile = new File(REVIEWS_PATH);
+        Scanner reviewScanner = new Scanner(reviewFile);
     	ArrayList<String> reviews = new ArrayList<String>();
         while (reviewScanner.hasNextLine())
         {
@@ -74,6 +79,7 @@ public class BackendClass
             	reviews.add((String) reviewObj.get("text"));
             }
         }
+        reviewScanner.close();
         // Return all the reviews at the end
     	return reviews;
     }
