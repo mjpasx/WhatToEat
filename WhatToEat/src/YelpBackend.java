@@ -35,21 +35,14 @@ public class YelpBackend
             backend.CleanUp(scanners);
             return;
         }
-        ArrayList<String> reviews = new ArrayList<String>();
-        ArrayList<String> newReviews = new ArrayList<String>();
-        int size;
-        ArrayList<RestaurantClass> reviewBusinesses = new ArrayList<RestaurantClass>();
+        ArrayList<ReviewClass> reviews = new ArrayList<ReviewClass>();
+        ArrayList<ReviewClass> newReviews = new ArrayList<ReviewClass>();
         for (int i = 0; i < businesses.size(); i ++)
         {
-        	String businessId = businesses.get(i).GetId();
+        	RestaurantClass business = businesses.get(i);
             // Get all the reviews about the specific restaurant
-        	newReviews = backend.GetReviews(businessId);
+        	newReviews = backend.GetReviews(business);
         	reviews.addAll(newReviews);
-        	size = newReviews.size();
-        	for (int j = 0; j < size; j ++)
-        	{
-        		reviewBusinesses.add(businesses.get(i));
-        	}
         }
         if (reviews.size() == 0)
         {
@@ -68,30 +61,33 @@ public class YelpBackend
         reviews = backend.EliminateQuotes(reviews);
 
         // Send the reviews to Google API and receive the response
-        ArrayList<String> sentimentAnalysis = backend.QueryGoogleApi(reviews);
+        reviews = backend.QueryGoogleApi(reviews);
         
         // Parse the Google response to get all of the entities
         ArrayList<EntityClass> entities = new ArrayList<EntityClass>();
-        for (int i = 0; i < sentimentAnalysis.size(); i ++)
+        for (int i = 0; i < reviews.size(); i ++)
         {
-        	entities.addAll(backend.GetEntities(sentimentAnalysis.get(i), reviews.get(i), reviewBusinesses.get(i)));
+        	entities.addAll(backend.GetEntities(reviews.get(i)));
         }
         
         //Testing the Open Menu Search
         ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
         System.out.println(restaurantInfo);
+        String restaurantResponse = "";
         
-                
-        //System.out.println(entities.get(0).GetSentiment());
-        //System.out.println(entities.get(0).GetWord());
-        //System.out.println(entities.get(0).GetReview());
-        for (int i = 0; i < entities.size(); i ++)
-        {
-        	System.out.println(entities.get(i).GetSentiment());
-        	System.out.println(entities.get(i).GetWord());
-            //System.out.println(entities.get(i).GetReview());
-        	System.out.println("\n");
-        }
+        // Map the sentiment scores to 0-5
+        entities = backend.MapSentimentScores(entities);
+        
+        // Match these entities with the menu items from OpenMenu
+        // using the best matching algorithm from our testing class
+        ArrayList<String> menuItems = new ArrayList<String>();
+        menuItems = backend.GetMenuItems(restaurantResponse);
+        
+        ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();
+        databaseEntities = backend.MatchMenuItems(entities, menuItems);
+        
+        // Send the matched entities to the database
+        backend.SendToDatabase(databaseEntities);
 
         backend.CleanUp(scanners);
     }

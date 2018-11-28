@@ -1,23 +1,19 @@
 
-public class EntityClass {
-	
-	private String word;
-	private double sentiment;
+public class ReviewClass {
+	private String analyzedReview;
 	private String review;
 	private String restName;
 	private String zipCode;
 	private String user;
 	private String time;
 	
-	public EntityClass()
+	public ReviewClass()
 	{
 		
 	}
 	
-	public EntityClass(String w, double sen, String rev, String rest, String code, String name, String t)
+	public ReviewClass(String rev, String rest, String code, String name, String t)
 	{
-		this.word = w;
-		this.sentiment = sen;
 		this.review = rev;
 		this.restName = rest;
 		this.zipCode = code;
@@ -25,14 +21,9 @@ public class EntityClass {
 		this.time = t;
 	}
 	
-	public void SetWord(String w)
+	public void SetAnalyzedReview(String analyzed)
 	{
-		this.word = w;
-	}
-	
-	public void SetSentiment(double sen)
-	{
-		this.sentiment = sen;
+		this.analyzedReview = analyzed;
 	}
 	
 	public void SetReview(String rev)
@@ -60,14 +51,9 @@ public class EntityClass {
 		this.time = t;
 	}
 	
-	public String GetWord()
+	public String GetAnalyzedReview()
 	{
-		return this.word;
-	}
-	
-	public double GetSentiment()
-	{
-		return this.sentiment;
+		return this.analyzedReview;
 	}
 	
 	public String GetReview()
@@ -94,5 +80,4 @@ public class EntityClass {
 	{
 		return this.time;
 	}
-
 }

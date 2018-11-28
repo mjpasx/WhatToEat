@@ -24,6 +24,7 @@ public class BackendClass
     private final String OPENMENU_URL = "https://openmenu.com/api/v2/search.php?key=";
     private final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
     //private final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+    private final String USERS_PATH = "yelp_dataset/yelp_academic_dataset_user.json";
     
   	public BackendClass()
   	{
@@ -62,11 +63,20 @@ public class BackendClass
         return restaurants;
     }
 
-    public ArrayList<String> GetReviews(String businessId) throws FileNotFoundException, ParseException
+    public ArrayList<ReviewClass> GetReviews(RestaurantClass business) throws FileNotFoundException, ParseException
     {
     	File reviewFile = new File(REVIEWS_PATH);
         Scanner reviewScanner = new Scanner(reviewFile);
-    	ArrayList<String> reviews = new ArrayList<String>();
+    	ArrayList<ReviewClass> reviews = new ArrayList<ReviewClass>();
+    	
+    	String review;
+    	String restName;
+    	String zipCode;
+    	String userId;
+    	String user;
+    	String time;
+    	String businessId = business.GetId();
+    	
         while (reviewScanner.hasNextLine())
         {
             String line = reviewScanner.nextLine();
@@ -76,34 +86,63 @@ public class BackendClass
             // If you get a matching business ID, add it to the list
             if (businessId.equals(id))
             {
-            	reviews.add((String) reviewObj.get("text"));
+            	review = (String) reviewObj.get("text");
+            	restName = business.GetRestName();
+            	zipCode = business.GetZipCode();
+            	userId = (String) reviewObj.get("user_id");
+            	user = GetUser(userId);
+            	time = (String) reviewObj.get("date");
+            	ReviewClass newReview = new ReviewClass(review, restName, zipCode, user, time);
+            	reviews.add(newReview);
             }
         }
         reviewScanner.close();
         // Return all the reviews at the end
     	return reviews;
     }
+    
+    public String GetUser(String userId) throws FileNotFoundException, ParseException
+    {
+    	File userFile = new File(USERS_PATH);
+        Scanner userScanner = new Scanner(userFile);
+        while (userScanner.hasNextLine())
+        {
+        	String line = userScanner.nextLine();
+        	Object obj = new JSONParser().parse(line);
+            JSONObject userObj = (JSONObject) obj;
+            String id = (String) userObj.get("user_id");
+            if (userId.equals(id))
+            {
+            	userScanner.close();
+            	return (String) userObj.get("name");
+            }
+        }
+        
+        userScanner.close();
+        return "";
+    }
 
-    public ArrayList<String> EliminateQuotes(ArrayList<String> reviews)
+    public ArrayList<ReviewClass> EliminateQuotes(ArrayList<ReviewClass> reviews)
     {
     	String text = "";
     	// Within each review, escape all quotes
     	// Need to do this for the Google API calls to work
     	for (int i = 0; i < reviews.size(); i ++)
     	{
-    		text = reviews.get(i);
+    		ReviewClass review = reviews.get(i);
     		reviews.remove(i);
-    		reviews.add(i, text.replace("\"", "\\\""));
+    		text = review.GetReview();
+    		text = text.replace("\"", "\\\"");
+    		review.SetReview(text);
+    		reviews.add(i, review);
     	}
     	return reviews;
     }
 
-    public ArrayList<String> QueryGoogleApi(ArrayList<String> reviews)
+    public ArrayList<ReviewClass> QueryGoogleApi(ArrayList<ReviewClass> reviews)
     {
     	// Get the API key from the environment
     	String apiKey = System.getenv("API_KEY");
-    	ArrayList<String> sentimentAnalysis = new ArrayList<String>();
-    	System.out.println(reviews.size());
     	for (int i = 0; i < reviews.size(); i ++)
     	{
     		try
@@ -119,7 +158,7 @@ public class BackendClass
             	// Write the request to Google
             	OutputStream os = connection.getOutputStream();
             	OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-            	osw.write(REQUEST_BEG + reviews.get(i) + REQUEST_END);
+            	osw.write(REQUEST_BEG + reviews.get(i).GetReview() + REQUEST_END);
             	osw.flush();
             	osw.close();
             	os.close();
@@ -136,9 +175,10 @@ public class BackendClass
             	}
             	// Turn the message into a string
             	reply = buf.toString();
-            	System.out.println(reply);
-            	System.out.println("\n\n\n\n\n");
-            	sentimentAnalysis.add(reply);
+            	ReviewClass review = reviews.get(i);
+            	reviews.remove(i);
+            	review.SetAnalyzedReview(reply);
+            	reviews.add(i, review);
         	}
     		// Catch if there is an error
         	catch(Exception e)
@@ -150,7 +190,7 @@ public class BackendClass
         	}
     	}
     	// Return all of the sentiment analysis results
-    	return sentimentAnalysis;
+    	return reviews;
     }
     
     public ArrayList<String> GrabMenu(String restaurantID) {
@@ -239,7 +279,7 @@ public class BackendClass
     	}
   
     
-    public ArrayList<EntityClass> GetEntities(String review, String revText, RestaurantClass restaurant) throws ParseException
+    public ArrayList<EntityClass> GetEntities(ReviewClass review) throws ParseException
     {
     	ArrayList<EntityClass> entities = new ArrayList<EntityClass>();
     	JSONObject entityObj;
@@ -249,8 +289,10 @@ public class BackendClass
     	Object mag;
     	double magnitude;
     	
+    	String text = review.GetAnalyzedReview();
+    	
     	// Turn the object into a JSON object
-    	Object obj = new JSONParser().parse(review);
+    	Object obj = new JSONParser().parse(text);
         JSONObject reviewObj = (JSONObject) obj;
         // Get the entities array, iterate through it
         JSONArray ents = (JSONArray) reviewObj.get("entities");
@@ -276,9 +318,11 @@ public class BackendClass
         	// Add the new entity object
         	object.SetWord(name);
         	object.SetSentiment(magnitude);
-        	object.SetReview(revText);
-        	object.SetRestName(restaurant.GetRestName());
-        	object.SetZipCode(restaurant.GetZipCode());
+        	object.SetReview(review.GetReview());
+        	object.SetRestName(review.GetRestName());
+        	object.SetZipCode(review.GetZipCode());
+        	object.SetName(review.GetUser());
+        	object.SetTime(review.GetTime());
         	entities.add(object);
         }
 
@@ -326,5 +370,51 @@ public class BackendClass
     	
     	return items;
     		
+    }
+    
+    public ArrayList<EntityClass> MapSentimentScores(ArrayList<EntityClass> entities)
+    {
+    	double sentiment;
+    	for (int i = 0; i < entities.size(); i ++)
+    	{
+    		EntityClass entity = new EntityClass();
+    		entity = entities.get(i);
+    		entities.remove(i);
+    		sentiment = entity.GetSentiment();
+    		sentiment = (sentiment - -1) / (1 - -1) * (5 - 0);
+    		entity.SetSentiment(sentiment);
+    		entities.add(i, entity);
+    	}
+    	return entities;
+    }
+    
+    public ArrayList<EntityClass> MatchMenuItems(ArrayList<EntityClass> entities, ArrayList<String> menuItems)
+    {
+    	ArrayList<EntityClass> databaseEnts = new ArrayList<EntityClass>();
+    	for (int i = 0; i < entities.size(); i ++)
+    	{
+    		for (int j = 0; j < menuItems.size(); j ++)
+    		{
+    			EntityClass entity = entities.get(i);
+    			String meal = entity.GetWord();
+    			String menuItem = menuItems.get(j);
+    			if (Match(meal, menuItem))
+    			{
+    				entity.SetWord(menuItem);
+    				databaseEnts.add(entity);
+    			}
+    		}
+    	}
+    	return databaseEnts;
+    }
+    
+    private boolean Match(String menu1, String menu2)
+    {
+    	return false;
+    }
+    
+    public int SendToDatabase(ArrayList<EntityClass> ents)
+    {
+    	return ents.size();
     }
 }
