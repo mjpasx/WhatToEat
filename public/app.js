@@ -12,12 +12,6 @@
 
   firebase.initializeApp(config);
 
-  const preObject = document.getElementById('object');
-  const dbRefObject = firebase.database().ref().child('object');
-
-  //real time synchronization
-  dbRefObject.on('value', snap => console.log(snap.val()));
-
   //angular fire set up
   angular
     .module('app', ['firebase'])
