@@ -73,7 +73,11 @@ public class YelpBackend
         //Testing the Open Menu Search
         ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
         System.out.println(restaurantInfo);
-        String restaurantResponse = "";
+        //String restaurantResponse = "";
+        
+       	//Testing the Open Menu Restaurant API call
+        ArrayList<String> menuInfo = backend.GrabMenu(restaurantInfo);
+        System.out.println(menuInfo);
         
         // Map the sentiment scores to 0-5
         entities = backend.MapSentimentScores(entities);
@@ -81,7 +85,7 @@ public class YelpBackend
         // Match these entities with the menu items from OpenMenu
         // using the best matching algorithm from our testing class
         ArrayList<String> menuItems = new ArrayList<String>();
-        menuItems = backend.GetMenuItems(restaurantResponse);
+        menuItems = backend.GetMenuItems(menuInfo);
         
         ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();
         databaseEntities = backend.MatchMenuItems(entities, menuItems);
