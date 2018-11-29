@@ -30,14 +30,13 @@ public class YelpBackend
         
         //Testing the Open Menu Search
         String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
+        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
         if (restaurantInfo.equals(""))
         {
         	System.out.println("Sorry but we do not have information about " + restName);
         	return;
         }
-        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
         System.out.println(restaurantInfo);
-        //String restaurantResponse = "";
         
        	//Testing the Open Menu Restaurant API call
         String menuInfo = backend.GrabMenu(restaurantInfo);
