@@ -84,7 +84,7 @@ public class YelpBackend
         
         // Match these entities with the menu items from OpenMenu
         // using the best matching algorithm from our testing class
-        ArrayList<String> menuItems = new ArrayList<String>();
+        ArrayList<String[]> menuItems = new ArrayList<String[]>();
         menuItems = backend.GetMenuItems(menuInfo);
         
         ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();

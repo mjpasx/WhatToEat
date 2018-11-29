@@ -272,7 +272,6 @@ public class BackendClass {
 		// Get the entities array, iterate through it
 		JSONArray ents = (JSONArray) reviewObj.get("entities");
 		for (int i = 0; i < ents.size(); i++) {
-			EntityClass object = new EntityClass();
 			entityObj = (JSONObject) ents.get(i);
 			// Get the name field from each object
 			name = (String) entityObj.get("name");
@@ -288,6 +287,7 @@ public class BackendClass {
 				magnitude = (double) mag;
 			}
 			// Add the new entity object
+			EntityClass object = new EntityClass();
 			object.SetWord(name);
 			object.SetSentiment(magnitude);
 			object.SetReview(review.GetReview());
@@ -295,14 +295,15 @@ public class BackendClass {
 			object.SetZipCode(review.GetZipCode());
 			object.SetName(review.GetUser());
 			object.SetTime(review.GetTime());
+			object.SetDescription(review.GetDescription());
 			entities.add(object);
 		}
 
 		return entities;
 	}
 
-	public ArrayList<String> GetMenuItems(String restInfo) throws ParseException {
-		ArrayList<String> items = new ArrayList<String>();
+	public ArrayList<String[]> GetMenuItems(String restInfo) throws ParseException {
+		ArrayList<String[]> items = new ArrayList<String[]>();
 		// Get the "response"
 		Object obj = new JSONParser().parse(restInfo);
 		JSONObject reviewObj = (JSONObject) obj;
@@ -318,6 +319,7 @@ public class BackendClass {
 		JSONArray menuItems;
 		JSONObject item;
 		String itemName;
+		String itemDesc;
 
 		// For each menu, go to "menu_groups"
 		for (int i = 0; i < menus.size(); i++) {
@@ -331,7 +333,9 @@ public class BackendClass {
 				for (int k = 0; k < menuItems.size(); k++) {
 					item = (JSONObject) menuItems.get(k);
 					itemName = (String) item.get("menu_item_name");
-					items.add(itemName);
+					itemDesc = (String) item.get("menu_item_description");
+					String[] itemTuple = { itemName, itemDesc };
+					items.add(itemTuple);
 				}
 			}
 		}
@@ -354,15 +358,16 @@ public class BackendClass {
 		return entities;
 	}
 
-	public ArrayList<EntityClass> MatchMenuItems(ArrayList<EntityClass> entities, ArrayList<String> menuItems) {
+	public ArrayList<EntityClass> MatchMenuItems(ArrayList<EntityClass> entities, ArrayList<String[]> menuItems) {
 		ArrayList<EntityClass> databaseEnts = new ArrayList<EntityClass>();
 		for (int i = 0; i < entities.size(); i++) {
 			for (int j = 0; j < menuItems.size(); j++) {
 				EntityClass entity = entities.get(i);
 				String meal = entity.GetWord();
-				String menuItem = menuItems.get(j);
+				String menuItem = menuItems.get(j)[0];
 				if (Match(meal, menuItem)) {
 					entity.SetWord(menuItem);
+					entity.SetDescription(menuItems.get(j)[1]);
 					databaseEnts.add(entity);
 				}
 			}

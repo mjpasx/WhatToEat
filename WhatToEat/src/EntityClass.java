@@ -8,13 +8,14 @@ public class EntityClass {
 	private String zipCode;
 	private String user;
 	private String time;
+	private String description;
 	
 	public EntityClass()
 	{
 		
 	}
 	
-	public EntityClass(String w, double sen, String rev, String rest, String code, String name, String t)
+	public EntityClass(String w, double sen, String rev, String rest, String code, String name, String t, String desc)
 	{
 		this.word = w;
 		this.sentiment = sen;
@@ -23,6 +24,7 @@ public class EntityClass {
 		this.zipCode = code;
 		this.user = name;
 		this.time = t;
+		this.description = desc;
 	}
 	
 	public void SetWord(String w)
@@ -60,6 +62,11 @@ public class EntityClass {
 		this.time = t;
 	}
 	
+	public void SetDescription(String desc)
+	{
+		this.description = desc;
+	}
+	
 	public String GetWord()
 	{
 		return this.word;
@@ -93,6 +100,11 @@ public class EntityClass {
 	public String GetTime()
 	{
 		return this.time;
+	}
+	
+	public String GetDescription()
+	{
+		return this.description;
 	}
 
 }

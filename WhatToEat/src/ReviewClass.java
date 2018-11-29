@@ -6,6 +6,7 @@ public class ReviewClass {
 	private String zipCode;
 	private String user;
 	private String time;
+	private String description;
 	
 	public ReviewClass()
 	{
@@ -51,6 +52,11 @@ public class ReviewClass {
 		this.time = t;
 	}
 	
+	public void SetDescription(String desc)
+	{
+		this.description = desc;
+	}
+	
 	public String GetAnalyzedReview()
 	{
 		return this.analyzedReview;
@@ -79,5 +85,10 @@ public class ReviewClass {
 	public String GetTime()
 	{
 		return this.time;
+	}
+	
+	public String GetDescription()
+	{
+		return this.description;
 	}
 }
