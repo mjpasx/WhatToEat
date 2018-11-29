@@ -175,10 +175,10 @@ public class BackendClass {
 		return reviews;
 	}
 
-	public ArrayList<String> GrabMenu(String restaurantID) {
+	public String GrabMenu(String restaurantID) {
 
 		String apiKey = System.getenv("OPENMENU_API");
-		ArrayList<String> menu = new ArrayList<String>();
+		String menu = "";
 		try {
 			// Set up a connection with Google API
 			URL url = new URL(OPENMENU_URL + apiKey + "&id=" + restaurantID);
@@ -204,7 +204,7 @@ public class BackendClass {
 			reply = buf.toString();
 			System.out.println(reply);
 			System.out.println("\n\n\n\n\n");
-			menu.add(reply);
+			menu = reply;
 		}
 
 		// Catch if there is an error
@@ -215,15 +215,16 @@ public class BackendClass {
 		return menu;
 	}
 
-	public ArrayList<String> QueryOpenMenuSearch(String restaurantName, String city) {
+	public String QueryOpenMenuSearch(String restaurantName, String zipCode) {
 		// Get the API key from the environment
 		String apiKey = System.getenv("OPENMENU_API");
-		ArrayList<String> restaurantInfo = new ArrayList<String>();
+		String restaurantInfo = "";
 		String country = "US";
+		restaurantName = restaurantName.replace(" ", "%20");
 
 		try {
 			// Set up a connection with Google API
-			URL url = new URL(OPENMENU_URL + apiKey + "&s=" + restaurantName + "&city=" + city + "&country" + country);
+			URL url = new URL(OPENMENU_URL + apiKey + "&s=" + restaurantName + "&postal_code=" + zipCode + "&country" + country);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			// Construct the POST message
@@ -245,7 +246,7 @@ public class BackendClass {
 			reply = buf.toString();
 			System.out.println(reply);
 			System.out.println("\n\n\n\n\n");
-			restaurantInfo.add(reply);
+			restaurantInfo = reply;
 		}
 		// Catch if there is an error
 		catch (Exception e) {

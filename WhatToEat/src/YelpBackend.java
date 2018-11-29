@@ -26,7 +26,24 @@ public class YelpBackend
         // Find the business ID corresponding to the name
         System.out.println("Enter the restaurant name: ");
         String restName = inputScanner.nextLine();
-        //String venueId = FindVenueID(restName);
+
+        
+        //Testing the Open Menu Search
+        String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
+        if (restaurantInfo.equals(""))
+        {
+        	System.out.println("Sorry but we do not have information about " + restName);
+        	return;
+        }
+        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
+        System.out.println(restaurantInfo);
+        //String restaurantResponse = "";
+        
+       	//Testing the Open Menu Restaurant API call
+        String menuInfo = backend.GrabMenu(restaurantInfo);
+        System.out.println(menuInfo);
+        
+        
         ArrayList<RestaurantClass> businesses = backend.FindBusinessId(restName, businessScanner);
         if (businesses.size() == 0)
         {
@@ -36,13 +53,11 @@ public class YelpBackend
             return;
         }
         ArrayList<ReviewClass> reviews = new ArrayList<ReviewClass>();
-        ArrayList<ReviewClass> newReviews = new ArrayList<ReviewClass>();
         for (int i = 0; i < businesses.size(); i ++)
         {
         	RestaurantClass business = businesses.get(i);
             // Get all the reviews about the specific restaurant
-        	newReviews = backend.GetReviews(business);
-        	reviews.addAll(newReviews);
+        	reviews.addAll(backend.GetReviews(business));
         }
         if (reviews.size() == 0)
         {
@@ -69,15 +84,6 @@ public class YelpBackend
         {
         	entities.addAll(backend.GetEntities(reviews.get(i)));
         }
-        
-        //Testing the Open Menu Search
-        ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
-        System.out.println(restaurantInfo);
-        //String restaurantResponse = "";
-        
-       	//Testing the Open Menu Restaurant API call
-        ArrayList<String> menuInfo = backend.GrabMenu(restaurantInfo);
-        System.out.println(menuInfo);
         
         // Map the sentiment scores to 0-5
         entities = backend.MapSentimentScores(entities);
