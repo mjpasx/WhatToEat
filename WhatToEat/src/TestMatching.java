@@ -127,7 +127,7 @@ public class TestMatching
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {    	
     	BackendClass backend = new BackendClass();
-    	    	
+    	    
     	// Open up scanners to read from the files
     	ArrayList<Scanner> scanners = new ArrayList<Scanner>();
     	File businessFile = new File(BUSINESS_PATH);
@@ -407,6 +407,8 @@ public class TestMatching
     	BigDecimal recall;
     	BigDecimal f1;
     	BigDecimal two = new BigDecimal(2);
+    	String leftAlignFormat = "%-35s |  %-4f   |  %-4f   |  %-4f%n";
+    	System.out.println("MATCHING ALGORITHM                  |  PRECISION  |  RECALL     |  F1 Score");
     	for (int i = 0; i < MATCHING_ALGS.length; i ++)
     	{
     		if (Matches[i][0] == BigDecimal.ZERO)
@@ -421,11 +423,7 @@ public class TestMatching
     			recall = Matches[i][0].divide(Matches[i][0].add(Matches[i][2]), 5, RoundingMode.HALF_UP);
     			f1 = precision.multiply(two).multiply(recall).divide(precision.add(recall), 5, RoundingMode.HALF_UP);
     		}
-    		System.out.println(MATCHING_ALGS[i]);
-    		System.out.println("Precision: " + precision);
-    		System.out.println("Recall: " + recall);
-    		System.out.println("F1 Score: " + f1);
-    		System.out.println("\n\n\n");
+    		System.out.format(leftAlignFormat, MATCHING_ALGS[i], precision, recall, f1);
     	}
 		
 		
