@@ -14,6 +14,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.cloud.firestore.DocumentReference;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
+
 // Class file that holds the functions common between TestMatching.java and YelpBackend.java
 public class BackendClass {
 	// Constants
@@ -381,6 +385,25 @@ public class BackendClass {
 	}
 
 	public int SendToDatabase(ArrayList<EntityClass> ents) {
-		return ents.size();
+		int count = 0;
+		FireStore db;
+		
+		for (int i = 0; i < ents.size(); i ++)
+		{
+			EntityClass entity = ents.get(i);
+			ApiFuture<DocumentReference> addedDocRef = db.collection("meal items").add(entity);
+			count ++;
+		}
+		
+		return count;
 	}
 }
+
+
+
+
+
+
+
+
+
