@@ -15,6 +15,12 @@ public class EntityClass {
 		
 	}
 	
+	public EntityClass(String w, double sen)
+	{
+		this.mealName = w;
+		this.sentimentScore = sen;
+	}
+	
 	public EntityClass(String w, double sen, String rev, String rest, String code, String name, String t, String desc)
 	{
 		this.mealName = w;

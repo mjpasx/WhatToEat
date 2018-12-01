@@ -7,7 +7,11 @@ import java.util.Scanner;
 import org.json.simple.parser.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ArrayList;
 
 public class TestMatching
@@ -17,18 +21,31 @@ public class TestMatching
     static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
 
     
-    static final String[] MATCHING_ALGS = {
-    	"Case Insensitive Matching",
-    	"Levenstein Edit Distance",
-    	"Jaro Similarity Metric",
-    	"Jaccard Similarity (2-gram)",
-    	"Jaccard Similarity (3-gram)",
-    	"Jaccard Similarity (word-gram)"
-    };
+    static ArrayList<EntityClass> MATCHING_ALGS = new ArrayList<EntityClass>();
     
     // Each int[] is true positives, false positives, false negatives
     // for each of the MATCHING_ALGS
     static BigDecimal[][] Matches = {
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
     		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
     		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
     		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
@@ -127,7 +144,34 @@ public class TestMatching
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {    	
     	BackendClass backend = new BackendClass();
-    	    
+    	
+        MATCHING_ALGS.add(new EntityClass("Case Insensitive Matching", 0.0));
+        MATCHING_ALGS.add(new EntityClass("Levenstein Edit Distance", 1.0));
+        MATCHING_ALGS.add(new EntityClass("Levenstein Edit Distance", 2.0));
+        MATCHING_ALGS.add(new EntityClass("Levenstein Edit Distance", 3.0));
+        MATCHING_ALGS.add(new EntityClass("Levenstein Edit Distance", 4.0));
+        MATCHING_ALGS.add(new EntityClass("Levenstein Edit Distance", 5.0));
+        MATCHING_ALGS.add(new EntityClass("Jaro Similarity Metric", 0.5));
+        MATCHING_ALGS.add(new EntityClass("Jaro Similarity Metric", 0.6));
+        MATCHING_ALGS.add(new EntityClass("Jaro Similarity Metric", 0.7));
+        MATCHING_ALGS.add(new EntityClass("Jaro Similarity Metric", 0.8));
+        MATCHING_ALGS.add(new EntityClass("Jaro Similarity Metric", 0.9));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (2-gram)", 0.5));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (2-gram)", 0.6));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (2-gram)", 0.7));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (2-gram)", 0.8));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (2-gram)", 0.9));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (3-gram)", 0.5));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (3-gram)", 0.6));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (3-gram)", 0.7));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (3-gram)", 0.8));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (3-gram)", 0.9));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.5));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.6));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.7));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.8));
+        MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.9));
+    	
     	// Open up scanners to read from the files
     	ArrayList<Scanner> scanners = new ArrayList<Scanner>();
     	File businessFile = new File(BUSINESS_PATH);
@@ -245,7 +289,6 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("CaseInsensitive False positive: " + menuItem + "  " + restaurantItem);
     							Matches[0][1] = Matches[0][1].add(BigDecimal.ONE);
     						}
     					}
@@ -258,7 +301,7 @@ public class TestMatching
     							Matches[0][2] = Matches[0][2].add(BigDecimal.ONE);
     						}
     					}
-    					if (LevensteinEditDistance(menuItem, restaurantItem, 4))
+    					if (LevensteinEditDistance(menuItem, restaurantItem, 1))
     					{
     						// If we have a match, it's a true positive if restaurantItem is
     						// in the ground truth for that reviews
@@ -269,7 +312,6 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("Levenstein False positive: " + menuItem + "  " + restaurantItem);
     							Matches[1][1] = Matches[1][1].add(BigDecimal.ONE);
     						}
     					}	
@@ -282,7 +324,7 @@ public class TestMatching
     							Matches[1][2] = Matches[1][2].add(BigDecimal.ONE);
     						}
     					}
-    					if (JaroSimilarity(menuItem, restaurantItem, 0.8))
+    					if (LevensteinEditDistance(menuItem, restaurantItem, 2))
     					{
     						// If we have a match, it's a true positive if restaurantItem is
     						// in the ground truth for that reviews
@@ -293,10 +335,9 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("Jaro False positive: " + menuItem + "  " + restaurantItem);
     							Matches[2][1] = Matches[2][1].add(BigDecimal.ONE);
     						}
-    					}
+    					}	
     					else
     					{
     						// If we don't have a match, it's a false negative if restaurantItem
@@ -306,9 +347,7 @@ public class TestMatching
     							Matches[2][2] = Matches[2][2].add(BigDecimal.ONE);
     						}
     					}
-    					tokens1 = Tokenize(menuItem, 2, false);
-    					tokens2 = Tokenize(restaurantItem, 2, false);
-    					if (JaccardSimilarity(tokens1, tokens2, 0.80))
+    					if (LevensteinEditDistance(menuItem, restaurantItem, 3))
     					{
     						// If we have a match, it's a true positive if restaurantItem is
     						// in the ground truth for that reviews
@@ -319,10 +358,9 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("Jaccard2 False positive: " + menuItem + "  " + restaurantItem);
     							Matches[3][1] = Matches[3][1].add(BigDecimal.ONE);
     						}
-    					}
+    					}	
     					else
     					{
     						// If we don't have a match, it's a false negative if restaurantItem
@@ -332,9 +370,7 @@ public class TestMatching
     							Matches[3][2] = Matches[3][2].add(BigDecimal.ONE);
     						}
     					}
-    					tokens1 = Tokenize(menuItem, 3, false);
-    					tokens2 = Tokenize(restaurantItem, 3, false);
-    					if (JaccardSimilarity(tokens1, tokens2, 0.8))
+    					if (LevensteinEditDistance(menuItem, restaurantItem, 4))
     					{
     						// If we have a match, it's a true positive if restaurantItem is
     						// in the ground truth for that reviews
@@ -345,10 +381,9 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("Jaccard3 False positive: " + menuItem + "  " + restaurantItem);
     							Matches[4][1] = Matches[4][1].add(BigDecimal.ONE);
     						}
-    					}
+    					}	
     					else
     					{
     						// If we don't have a match, it's a false negative if restaurantItem
@@ -358,9 +393,7 @@ public class TestMatching
     							Matches[4][2] = Matches[4][2].add(BigDecimal.ONE);
     						}
     					}
-    					tokens1 = Tokenize(menuItem, 1, true);
-    					tokens2 = Tokenize(restaurantItem, 1, true);
-    					if (JaccardSimilarity(tokens1, tokens2, 0.8))
+    					if (LevensteinEditDistance(menuItem, restaurantItem, 5))
     					{
     						// If we have a match, it's a true positive if restaurantItem is
     						// in the ground truth for that reviews
@@ -371,10 +404,9 @@ public class TestMatching
     						// False positive otherwise
     						else
     						{
-    							System.out.println("JaccardW False positive: " + menuItem + "  " + restaurantItem);
     							Matches[5][1] = Matches[5][1].add(BigDecimal.ONE);
     						}
-    					}
+    					}	
     					else
     					{
     						// If we don't have a match, it's a false negative if restaurantItem
@@ -384,20 +416,476 @@ public class TestMatching
     							Matches[5][2] = Matches[5][2].add(BigDecimal.ONE);
     						}
     					}
+    					if (JaroSimilarity(menuItem, restaurantItem, 0.5))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[6][0] = Matches[6][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[6][1] = Matches[6][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[6][2] = Matches[6][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaroSimilarity(menuItem, restaurantItem, 0.6))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[7][0] = Matches[7][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[7][1] = Matches[7][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[7][2] = Matches[7][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaroSimilarity(menuItem, restaurantItem, 0.7))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[8][0] = Matches[8][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[8][1] = Matches[8][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[8][2] = Matches[8][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaroSimilarity(menuItem, restaurantItem, 0.8))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[9][0] = Matches[9][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[9][1] = Matches[9][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[9][2] = Matches[9][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaroSimilarity(menuItem, restaurantItem, 0.9))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[10][0] = Matches[10][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[10][1] = Matches[10][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[10][2] = Matches[10][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					tokens1 = Tokenize(menuItem, 2, false);
+    					tokens2 = Tokenize(restaurantItem, 2, false);
+    					if (JaccardSimilarity(tokens1, tokens2, 0.5))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[11][0] = Matches[11][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[11][1] = Matches[11][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[11][2] = Matches[11][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.6))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[12][0] = Matches[12][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[12][1] = Matches[12][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[12][2] = Matches[12][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.7))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[13][0] = Matches[13][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[13][1] = Matches[13][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[13][2] = Matches[13][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.8))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[14][0] = Matches[14][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[14][1] = Matches[14][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[14][2] = Matches[14][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.9))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[15][0] = Matches[15][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[15][1] = Matches[15][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[15][2] = Matches[15][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					tokens1 = Tokenize(menuItem, 3, false);
+    					tokens2 = Tokenize(restaurantItem, 3, false);
+    					if (JaccardSimilarity(tokens1, tokens2, 0.5))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[16][0] = Matches[16][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[16][1] = Matches[16][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[16][2] = Matches[16][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.6))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[17][0] = Matches[17][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[17][1] = Matches[17][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[17][2] = Matches[17][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.7))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[18][0] = Matches[18][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[18][1] = Matches[18][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[18][2] = Matches[18][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.8))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[19][0] = Matches[19][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[19][1] = Matches[19][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[19][2] = Matches[19][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.9))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[20][0] = Matches[20][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[20][1] = Matches[20][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[20][2] = Matches[20][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					tokens1 = Tokenize(menuItem, 1, true);
+    					tokens2 = Tokenize(restaurantItem, 1, true);
+    					if (JaccardSimilarity(tokens1, tokens2, 0.5))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[21][0] = Matches[21][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[21][1] = Matches[21][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[21][2] = Matches[21][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.6))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[22][0] = Matches[22][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[22][1] = Matches[22][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[22][2] = Matches[22][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.7))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[23][0] = Matches[23][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[23][1] = Matches[23][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[23][2] = Matches[23][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.8))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[24][0] = Matches[24][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[24][1] = Matches[24][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[24][2] = Matches[24][2].add(BigDecimal.ONE);
+    						}
+    					}
+    					if (JaccardSimilarity(tokens1, tokens2, 0.9))
+    					{
+    						// If we have a match, it's a true positive if restaurantItem is
+    						// in the ground truth for that reviews
+    						if (shouldMatch)
+    						{
+    							Matches[25][0] = Matches[25][0].add(BigDecimal.ONE);
+    						}
+    						// False positive otherwise
+    						else
+    						{
+    							Matches[25][1] = Matches[25][1].add(BigDecimal.ONE);
+    						}
+    					}
+    					else
+    					{
+    						// If we don't have a match, it's a false negative if restaurantItem
+    						// is in the ground truth for that review
+    						if (shouldMatch)
+    						{
+    							Matches[25][2] = Matches[25][2].add(BigDecimal.ONE);
+    						}
+    					}
     				}
     			}
     		}
     	}
-    	
-//    	for (int i = 0; i < MATCHING_ALGS.length; i ++)
-//    	{
-//    		System.out.println(Matches[i][0]);
-//        	System.out.println(Matches[i][1]);
-//        	System.out.println(Matches[i][2]);
-//        	System.out.println("\n\n\n");
-//    	}
-    	
-    	
 		
 		// Calculate the precision/recall/F1 score for each and output as table
     	// precision = true pos / (true pos + false pos)
@@ -407,9 +895,9 @@ public class TestMatching
     	BigDecimal recall;
     	BigDecimal f1;
     	BigDecimal two = new BigDecimal(2);
-    	String leftAlignFormat = "%-35s |  %-4f   |  %-4f   |  %-4f%n";
-    	System.out.println("MATCHING ALGORITHM                  |  PRECISION  |  RECALL     |  F1 Score");
-    	for (int i = 0; i < MATCHING_ALGS.length; i ++)
+    	String leftAlignFormat = "%-35s |     %.1f     |  %-4f   |  %-4f   |  %-4f%n";
+    	System.out.println("MATCHING ALGORITHM                  |  THRESHOLD  |  PRECISION  |  RECALL     |  F1 Score");
+    	for (int i = 0; i < MATCHING_ALGS.size(); i ++)
     	{
     		if (Matches[i][0] == BigDecimal.ZERO)
     		{
@@ -423,7 +911,7 @@ public class TestMatching
     			recall = Matches[i][0].divide(Matches[i][0].add(Matches[i][2]), 5, RoundingMode.HALF_UP);
     			f1 = precision.multiply(two).multiply(recall).divide(precision.add(recall), 5, RoundingMode.HALF_UP);
     		}
-    		System.out.format(leftAlignFormat, MATCHING_ALGS[i], precision, recall, f1);
+    		System.out.format(leftAlignFormat, MATCHING_ALGS.get(i).GetWord(), MATCHING_ALGS.get(i).GetSentiment(), precision, recall, f1);
     	}
 		
 		
