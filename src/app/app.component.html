@@ -1,33 +1,18 @@
 <div style="text-align:center">
   <h1>
-      Welcome to {{title}}
+    {{title}}
   </h1>
 </div>
 
 <body ng-app = "app">
-    <div class="container">
-    <div class="row">
-          <div class="col-sm-6 col-sm-offset-3">
-            <img src="img/logo.png" class="center-block" alt="logo" />
+            <img src="assets/logo.png" alt="logo" />
             <h4>How does it work?</h4>
             <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
-              <div id="imaginary_container">
-                  <div class="input-group stylish-input-group">
-                      <input type="text" class="form-control"  placeholder="Restaurant Name" >
-                      <span class="input-group-addon">
-                        <a href="results.html" role="button">
-                          <button type="submit">
-                              <span class="glyphicon glyphicon-search"></span>
-                          </button>
-                          </a>
-                      </span>
-                  </div>
-              </div>
-          </div>
-    </div>
-    </div>
+
+            <input type="text" placeholder="Search..">
+
+            <input type="submit" value="Submit">
 
 <app-results></app-results>
-<app-dish></app-dish>
 
 </body>
