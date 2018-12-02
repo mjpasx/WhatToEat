@@ -6,6 +6,8 @@ import { AngularFireModule } from 'angularfire2';
 import { FirebaseConfig } from '../environments/firebase.config';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { ResultsComponent } from './results/results.component';
+import { DishComponent } from './dish/dish.component';
 
 export const environment = {
     apiKey: "AIzaSyA0Ga4JeU4wO3h_vsW5xWMH_qmjlDQOcxM",
@@ -17,7 +19,7 @@ export const environment = {
 };
 
   @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ResultsComponent, DishComponent],
   imports: [
     BrowserModule,
     FormsModule,

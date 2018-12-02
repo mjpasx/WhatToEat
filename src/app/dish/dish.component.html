@@ -1,0 +1,45 @@
+  <div class="container">
+  <div class="row">
+      <h1>Dish</h1>
+
+      <body ng-app = "app">
+        <div style="text-align:center">
+        <ul>
+          <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
+            <h1 class="my-4">{{mealItem.restaurantName}}</h1>
+            <h3>{{mealItem.zipcode}}</h3>
+          <div class="col-lg-9">
+            <div class="card mt-4">
+              <img class="card-img-top img-fluid" src="img/spicyfriedrice.jpg" alt="">
+              <div class="card-body">
+                <h3 class="card-title">{{mealItem.mealName}}</h3>
+                <p class="card-text">{{mealItem.description}}</p>
+                <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
+                Average: 4/5
+              </div>
+            </div>
+
+            <div class="card card-outline-secondary my-4">
+              <div class="card-header">
+                Product Reviews
+              </div>
+              <div class="card-body">
+                <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9733;</span>
+                <p>{{mealItem.review}}</p>
+                <p>{{mealItem.sentimentScore}}</p>
+                <small class="text-muted">Posted by {{mealItem.user}} on {{mealItem.timestamp}}</small>
+                <hr>
+                <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9733;</span>
+                <p>{{mealItem.review}}</p>
+                <p>{{mealItem.sentimentScore}}</p>
+                <small class="text-muted">Posted by {{mealItem.user}} on {{mealItem.timestamp}}</small>
+                <hr>
+              </div>
+            </div>
+          </div>
+          </li>
+          </ul>
+        </div>
+      </body>
+</div>
+</div>

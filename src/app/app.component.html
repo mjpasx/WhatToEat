@@ -1,10 +1,6 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
-
-  <title>What to Eat</title>
-
   <h1>
-    Angular firestore
+      Welcome to {{title}}
   </h1>
 </div>
 
@@ -31,26 +27,7 @@
     </div>
     </div>
 
+<app-results></app-results>
+<app-dish></app-dish>
+
 </body>
-
-
-<div style="text-align:center">
-New Feature: Next generation Firestore (Beta) Realtime DB
-<br>
-<ul>
-  <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
-    {{mealItem.mealName}}
-
-    {{mealItem.restaurantName}}
-    {{mealItem.description}}
-    {{mealItem.sentimentScore}}
-
-    {{mealItem.timestamp}}
-    {{mealItem.user}}
-    {{mealItem.zipcode}}
-
-    {{mealItem.review}}
-
-  </li>
-</ul>
-</div>
