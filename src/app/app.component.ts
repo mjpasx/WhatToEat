@@ -9,8 +9,8 @@ import * as firebase from 'firebase/app';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  items: Observable<any[]>;
+  mealItems: Observable<any[]>;
 constructor(public db: AngularFirestore) {
-    this.items = db.collection('items').valueChanges();
+    this.mealItems = db.collection('meal-items').valueChanges();
   }
 }
