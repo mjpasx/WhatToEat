@@ -3,6 +3,8 @@
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+
 import org.json.simple.parser.*;
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class YelpBackend
 	// Constants
     static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
     
-    public static void main(String[] args) throws FileNotFoundException, ParseException
+    public static void main(String[] args) throws ParseException, IOException, InterruptedException, ExecutionException
     {
     	BackendClass backend = new BackendClass();
     	
@@ -30,14 +32,13 @@ public class YelpBackend
         
         //Testing the Open Menu Search
         String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
+        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
         if (restaurantInfo.equals(""))
         {
         	System.out.println("Sorry but we do not have information about " + restName);
         	return;
         }
-        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
         System.out.println(restaurantInfo);
-        //String restaurantResponse = "";
         
        	//Testing the Open Menu Restaurant API call
         String menuInfo = backend.GrabMenu(restaurantInfo);
@@ -93,10 +94,15 @@ public class YelpBackend
         ArrayList<String[]> menuItems = new ArrayList<String[]>();
         menuItems = backend.GetMenuItems(menuInfo);
         
+        
         ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();
         databaseEntities = backend.MatchMenuItems(entities, menuItems);
         
         // Send the matched entities to the database
+        
+        //EntityClass test = new EntityClass("word", 5.0, "IT WORKS", "test", "12345", "Bleech", "6-5-3", "sauce");
+        //databaseEntities.add(test);
+        		
         backend.SendToDatabase(databaseEntities);
 
         backend.CleanUp(scanners);

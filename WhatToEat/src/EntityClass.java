@@ -1,40 +1,46 @@
 
 public class EntityClass {
 	
-	private String word;
-	private double sentiment;
-	private String review;
-	private String restName;
-	private String zipCode;
-	private String user;
-	private String time;
-	private String description;
+	public String mealName;
+	public double sentimentScore;
+	public String review;
+	public String restaurantName;
+	public String zipcode;
+	public String user;
+	public String timestamp;
+	public String description;
 	
 	public EntityClass()
 	{
 		
 	}
 	
+	public EntityClass(String w, double sen)
+	{
+		this.mealName = w;
+		this.sentimentScore = sen;
+	}
+	
 	public EntityClass(String w, double sen, String rev, String rest, String code, String name, String t, String desc)
 	{
-		this.word = w;
-		this.sentiment = sen;
+		this.mealName = w;
+		this.sentimentScore = sen;
 		this.review = rev;
-		this.restName = rest;
-		this.zipCode = code;
+		this.restaurantName = rest;
+		this.zipcode = code;
 		this.user = name;
-		this.time = t;
+		this.timestamp = t;
 		this.description = desc;
 	}
 	
 	public void SetWord(String w)
 	{
-		this.word = w;
+		this.mealName = w;
 	}
 	
 	public void SetSentiment(double sen)
 	{
-		this.sentiment = sen;
+		this.sentimentScore = sen;
 	}
 	
 	public void SetReview(String rev)
@@ -44,12 +50,12 @@ public class EntityClass {
 	
 	public void SetRestName(String name)
 	{
-		this.restName = name;
+		this.restaurantName = name;
 	}
 	
 	public void SetZipCode(String code)
 	{
-		this.zipCode = code;
+		this.zipcode = code;
 	}
 	
 	public void SetName(String name)
@@ -59,7 +65,7 @@ public class EntityClass {
 	
 	public void SetTime(String t)
 	{
-		this.time = t;
+		this.timestamp = t;
 	}
 	
 	public void SetDescription(String desc)
@@ -69,12 +75,12 @@ public class EntityClass {
 	
 	public String GetWord()
 	{
-		return this.word;
+		return this.mealName;
 	}
 	
 	public double GetSentiment()
 	{
-		return this.sentiment;
+		return this.sentimentScore;
 	}
 	
 	public String GetReview()
@@ -84,12 +90,12 @@ public class EntityClass {
 	
 	public String GetRestName()
 	{
-		return this.restName;
+		return this.restaurantName;
 	}
 	
 	public String GetZipCode()
 	{
-		return this.zipCode;
+		return this.zipcode;
 	}
 	
 	public String GetUser()
@@ -99,7 +105,7 @@ public class EntityClass {
 	
 	public String GetTime()
 	{
-		return this.time;
+		return this.timestamp;
 	}
 	
 	public String GetDescription()

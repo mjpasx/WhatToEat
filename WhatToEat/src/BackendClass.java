@@ -1,18 +1,31 @@
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import com.google.cloud.firestore.DocumentReference;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreOptions;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.FirebaseApp;
+import com.google.auth.oauth2.GoogleCredentials;
+
 
 // Class file that holds the functions common between TestMatching.java and YelpBackend.java
 public class BackendClass {
@@ -380,7 +393,37 @@ public class BackendClass {
 		return false;
 	}
 
-	public int SendToDatabase(ArrayList<EntityClass> ents) {
-		return ents.size();
+	public int SendToDatabase(ArrayList<EntityClass> ents) throws IOException, InterruptedException, ExecutionException {
+		int count = 0;
+		
+		FileInputStream serviceAccount = new FileInputStream("/Users/Bleecher/Desktop/My Stuff/Senior Year/Senior Seminar/WhatToEat/WhatToEat/src/firestore/What to Eat-8f9201211161.json");
+
+		FirebaseOptions options = new FirebaseOptions.Builder()
+				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+				.setDatabaseUrl("https://what-to-eat-219113.firebaseio.com/")
+				.build();
+
+		FirebaseApp.initializeApp(options);
+		
+		Firestore db = FirestoreClient.getFirestore();
+		
+		for (int i = 0; i < ents.size(); i ++)
+		{
+			EntityClass entity = ents.get(i);
+			ApiFuture<DocumentReference> addedDocRef = db.collection("meal-items").add(entity);
+			System.out.println(addedDocRef.get().getId());
+			count ++;
+		}
+		
+		return count;
 	}
 }
+
+
+
+
+
+
+
+
+
