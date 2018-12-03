@@ -3,7 +3,7 @@
       <ul>
         <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
           <p>{{mealItem.review}}</p>
-          <p>{{mealItem.sentimentScore}}</p>
+          <p>Rating: {{mealItem.sentimentScore}} / 5</p>
           <small class="text-muted">Posted by {{mealItem.user}} on {{mealItem.timestamp}}</small>
         </li>
       </ul>

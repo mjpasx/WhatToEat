@@ -9,4 +9,6 @@ export class AppComponent {
   title = 'What To Eat';
   show: boolean = false;
 
+
+
 }
