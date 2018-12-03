@@ -1,18 +1,16 @@
 <div style="text-align:center">
-  <h1>
-    {{title}}
-  </h1>
+  <body ng-app = "app">
+    <img src="assets/logo.png" alt="logo" />
+    <h4>How does it work?</h4>
+    <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
+
+    <input type="text" placeholder="Search up a restaurant!">
+
+    <button (click)="show = !show">{{show ? 'Search' : 'Search'}}</button>
+        <br>
+        <div *ngIf="show; else elseBlock">
+          <app-results></app-results>
+        </div>
+        <ng-template #elseBlock></ng-template>
+  </body>
 </div>
-
-<body ng-app = "app">
-            <img src="assets/logo.png" alt="logo" />
-            <h4>How does it work?</h4>
-            <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
-
-            <input type="text" placeholder="Search..">
-
-            <input type="submit" value="Submit">
-
-<app-results></app-results>
-
-</body>
