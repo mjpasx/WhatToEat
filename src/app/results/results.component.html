@@ -1,0 +1,20 @@
+
+<body ng-app = "app">
+  <ul>
+    <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
+      <h5 class="my-4">{{mealItem.restaurantName}}
+      </h5>
+
+      <div>
+        <p> Meal Name: {{mealItem.mealName}} </p>
+        <p> Description: {{mealItem.description}} </p>
+        <p> Average sentiment score: TBD </p>
+
+          <app-dish></app-dish>
+
+      </div>
+
+
+    </li>
+  </ul>
+</body>
