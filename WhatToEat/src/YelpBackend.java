@@ -28,22 +28,6 @@ public class YelpBackend
         // Find the business ID corresponding to the name
         System.out.println("Enter the restaurant name: ");
         String restName = inputScanner.nextLine();
-
-        
-        //Testing the Open Menu Search
-        String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
-        //ArrayList<String> restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
-        if (restaurantInfo.equals(""))
-        {
-        	System.out.println("Sorry but we do not have information about " + restName);
-        	return;
-        }
-        System.out.println(restaurantInfo);
-        
-       	//Testing the Open Menu Restaurant API call
-        String menuInfo = backend.GrabMenu(restaurantInfo);
-        System.out.println(menuInfo);
-        
         
         ArrayList<RestaurantClass> businesses = backend.FindBusinessId(restName, businessScanner);
         if (businesses.size() == 0)
@@ -67,11 +51,21 @@ public class YelpBackend
         	backend.CleanUp(scanners);
         	return;
         }
-        for (int i = 0; i < reviews.size(); i ++)
+
+        
+        //Testing the Open Menu Search
+        //String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
+        //String restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
+        String restaurantInfo = backend.QueryOpenMenuSearch(restName, "94118");
+        if (restaurantInfo.equals(""))
         {
-        	System.out.println(reviews.get(i));
-        	System.out.println("\n\n\n\n\n\n");
+        	System.out.println("Sorry but we do not have information about " + restName);
+        	return;
         }
+        
+        //Testing the Open Menu Restaurant API call
+        String menuInfo = backend.GrabMenu(restaurantInfo);
+        
 
         // Escape quotes in reviews which were causing errors with Google API
         reviews = backend.EliminateQuotes(reviews);
@@ -94,15 +88,13 @@ public class YelpBackend
         ArrayList<String[]> menuItems = new ArrayList<String[]>();
         menuItems = backend.GetMenuItems(menuInfo);
         
-        
         ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();
         databaseEntities = backend.MatchMenuItems(entities, menuItems);
         
-        // Send the matched entities to the database
-        
-        //EntityClass test = new EntityClass("word", 5.0, "IT WORKS", "test", "12345", "Bleech", "6-5-3", "sauce");
+        //EntityClass test = new EntityClass("meal name", 5.0, "This is delicious", "Test Restaurant", "12345", "Bleech", "2018-12-3", "Test entity to add to the database");
         //databaseEntities.add(test);
         		
+        // Send the matched entities to the database
         backend.SendToDatabase(databaseEntities);
 
         backend.CleanUp(scanners);

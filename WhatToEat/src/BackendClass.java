@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -20,7 +22,6 @@ import org.json.simple.parser.ParseException;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
@@ -33,7 +34,8 @@ public class BackendClass {
 	private final String GOOGLE_URL = "https://language.googleapis.com/v1/documents:analyzeEntitySentiment?key=";
 	private final String REQUEST_BEG = "{\"document\":{\"type\":\"PLAIN_TEXT\",\"content\":\"";
 	private final String REQUEST_END = "\"},\"encodingType\":\"UTF8\"}";
-	private final String OPENMENU_URL = "https://openmenu.com/api/v2/search.php?key=";
+	private final String OPENMENU_SEARCH_URL = "https://openmenu.com/api/v2/search.php?key=";
+	private final String OPENMENU_MENU_URL = "https://openmenu.com/api/v2/restaurant.php?key=";
 	private final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
 	// private final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
 	private final String USERS_PATH = "yelp_dataset/yelp_academic_dataset_user.json";
@@ -194,7 +196,7 @@ public class BackendClass {
 		String menu = "";
 		try {
 			// Set up a connection with Google API
-			URL url = new URL(OPENMENU_URL + apiKey + "&id=" + restaurantID);
+			URL url = new URL(OPENMENU_MENU_URL + apiKey + "&id=" + restaurantID);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			// Construct the POST message
@@ -227,8 +229,26 @@ public class BackendClass {
 		}
 		return menu;
 	}
+	
+	private String GetOpenMenuId(String restaurantInfo) throws ParseException
+	{
+		String id = "";
+		Object obj = new JSONParser().parse(restaurantInfo);
+		JSONObject reviewObj = (JSONObject) obj;
+		JSONObject response = (JSONObject) reviewObj.get("response");
+		// Get the entities array, iterate through it
+		JSONObject result = (JSONObject) response.get("result");
+		JSONArray restaurants = (JSONArray) result.get("restaurants");
+		JSONObject restaurant = (JSONObject) restaurants.get(0);
+		id = (String) restaurant.get("id");
+		
+		// Automatically a "==" at the end of the id that we need to remove
+		int length = id.length();
+		id = id.substring(0, length - 2);
+		return id;
+	}
 
-	public String QueryOpenMenuSearch(String restaurantName, String zipCode) {
+	public String QueryOpenMenuSearch(String restaurantName, String zipCode) throws ParseException {
 		// Get the API key from the environment
 		String apiKey = System.getenv("OPENMENU_API");
 		String restaurantInfo = "";
@@ -237,7 +257,8 @@ public class BackendClass {
 
 		try {
 			// Set up a connection with Google API
-			URL url = new URL(OPENMENU_URL + apiKey + "&s=" + restaurantName + "&postal_code=" + zipCode + "&country" + country);
+			URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restaurantName + "&postal_code=" + zipCode + "&country=" + country);
+			
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			// Construct the POST message
@@ -257,16 +278,16 @@ public class BackendClass {
 			}
 			// Turn the message into a string
 			reply = buf.toString();
-			System.out.println(reply);
-			System.out.println("\n\n\n\n\n");
 			restaurantInfo = reply;
+			
 		}
 		// Catch if there is an error
 		catch (Exception e) {
 			System.out.println("Error.");
 			System.out.println(e);
 		}
-		return restaurantInfo;
+		String restId = GetOpenMenuId(restaurantInfo);
+		return restId;
 	}
 
 	public ArrayList<EntityClass> GetEntities(ReviewClass review) throws ParseException {
@@ -390,7 +411,12 @@ public class BackendClass {
 	}
 
 	private boolean Match(String menu1, String menu2) {
-		return false;
+		
+		String[] tokens1 = Tokenize(menu1, 2, false);
+		String[] tokens2 = Tokenize(menu2, 2, false);
+		
+		// Use our best matching metric and threshold from testing program
+		return JaccardSimilarity(tokens1, tokens2, 0.8);
 	}
 
 	public int SendToDatabase(ArrayList<EntityClass> ents) throws IOException, InterruptedException, ExecutionException {
@@ -417,6 +443,79 @@ public class BackendClass {
 		
 		return count;
 	}
+	
+    public boolean JaccardSimilarity(String[] str1, String[] str2, double minAmt)
+    {
+    	// Turn the tokens into sets
+    	HashSet<String> str1Tokens = new HashSet<String>(Arrays.asList(str1));
+    	HashSet<String> str2Tokens = new HashSet<String>(Arrays.asList(str2));
+    	
+    	// Get the intersection of the tokens
+    	HashSet<String> intersection = new HashSet<String>(str1Tokens);
+    	intersection.retainAll(str2Tokens);
+    	
+    	// Get the union of the tokens
+    	HashSet<String> union = new HashSet<String>(str1Tokens);
+    	union.addAll(str2Tokens);
+    	
+    	// Calculate the similarity
+    	double similarity = ((double) intersection.size()) / ((double) union.size());
+    	
+    	// Return true if similarity is greater than the min amount acceptable
+    	if (similarity >= minAmt)
+    	{
+    		return true;
+    	}
+    	// False otherwise
+    	return false;
+    }
+    
+    public String[] Tokenize(String str, int ngramLen, boolean asWords)
+    {
+    	// Remove punctuation
+    	str = RemovePunct(str);
+    	str = str.toLowerCase();
+    	
+    	// If tokenizing as words, then split on spaces
+    	if (asWords)
+    	{
+    		return str.split(" ");
+    	}
+    	
+    	ArrayList<String> tokens = new ArrayList<String>();
+    	String token = "";
+    	// Iterate through the string to split it up into ngrams
+    	for (int i = 0; i < str.length() - ngramLen + 1; i ++)
+    	{
+    		token = str.substring(i, i + ngramLen);
+    		tokens.add(token);
+    	}
+    	
+    	// Convert to a String[]
+    	String[] tokensArr = tokens.toArray(new String[tokens.size()]);
+    	return tokensArr;
+    }
+    
+    public String RemovePunct(String str)
+    {
+    	// Remove all the punctuation from the strings
+    	str.replaceAll(".", "");
+    	str.replaceAll(",", "");
+    	str.replaceAll("'", "");
+    	str.replaceAll(":", "");
+    	str.replaceAll("!", "");
+    	str.replaceAll("\\?", "");
+    	str.replaceAll("@", "");
+    	str.replaceAll("#", "");
+    	str.replaceAll("$", "");
+    	str.replaceAll("&", "");
+    	str.replaceAll("\\(", "");
+    	str.replaceAll("\\)", "");
+    	str.replaceAll(";", "");
+    	str.replaceAll("\"", "");
+    	
+    	return str;
+    }
 }
 
 
