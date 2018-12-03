@@ -10,8 +10,12 @@
         <p> Description: {{mealItem.description}} </p>
         <p> Average sentiment score: TBD </p>
 
-          <app-dish></app-dish>
-
+          <button (click)="show = !show">{{show ? 'Close Reviews' : 'Click for reviews'}}</button>
+              <br>
+              <div *ngIf="show; else elseBlock">
+                <app-dish></app-dish>
+              </div>
+              <ng-template #elseBlock></ng-template>
       </div>
 
 

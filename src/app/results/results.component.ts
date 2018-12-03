@@ -10,6 +10,7 @@ import * as firebase from 'firebase/app';
   styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit {
+  show: boolean = false;
   mealItems: Observable<any[]>;
   constructor(public db: AngularFirestore) {
     this.mealItems = db.collection('meal-items').valueChanges();
