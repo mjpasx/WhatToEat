@@ -9,8 +9,9 @@
       <div>
         <p> Meal Name: {{mealItem.mealName}} </p>
         <p> Description: {{mealItem.description}} </p>
-        <p> Average sentiment score: TBD </p>
-          <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
+        <p> Average sentiment score: FIGURE THIS OUT  </p>
+        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+        <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
             <br>
             <div *ngIf="show; else elseBlock">
               <app-dish></app-dish>

@@ -9,6 +9,7 @@ import * as firebase from 'firebase/app';
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css']
 })
+
 export class ResultsComponent implements OnInit {
   show: boolean = false;
   mealItems: Observable<any[]>;
