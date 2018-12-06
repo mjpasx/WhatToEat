@@ -14,13 +14,21 @@
     <h4>How does it work?</h4>
     <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
 
-    <input type="text" placeholder="Search up a restaurant!">
+    <input #box (keyup.enter)="onEnter(box.value)">
+    <p>{{value}}</p>
 
     <button (click)="show = !show">{{show ? 'Search' : 'Search'}}</button>
         <br>
         <div *ngIf="show; else elseBlock">
-          <app-results></app-results>
+          <app-results [searchInput] = "box.value"></app-results>
         </div>
         <ng-template #elseBlock></ng-template>
+
+        <div>
+          <h3>
+            {{ (mealItems | async)?.restaurantName }}
+          </h3>
+        </div>
+
   </body>
 </div>

@@ -8,6 +8,8 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ResultsComponent } from './results/results.component';
 import { DishComponent } from './dish/dish.component';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 export const environment = {
     apiKey: "AIzaSyA0Ga4JeU4wO3h_vsW5xWMH_qmjlDQOcxM",
@@ -25,7 +27,9 @@ export const environment = {
     FormsModule,
     AngularFireModule.initializeApp(FirebaseConfig.firebase),
     AngularFirestoreModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    ReactiveFormsModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]
