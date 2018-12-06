@@ -22,7 +22,7 @@
         <div *ngIf="show; else elseBlock">
           <app-results [searchInput] = "box.value"></app-results>
         </div>
-        <ng-template #elseBlock></ng-template>
+        <ng-template #elseBlock>Restaurant not found :( </ng-template>
 
         <div>
           <h3>
