@@ -13,11 +13,13 @@ import * as firebase from 'firebase/app';
 export class ResultsComponent implements OnInit {
   show: boolean = false;
   mealItems: Observable<any[]>;
+
   constructor(public db: AngularFirestore) {
     this.mealItems = db.collection('meal-items').valueChanges();
   }
 
   ngOnInit() {
+
   }
 
 }

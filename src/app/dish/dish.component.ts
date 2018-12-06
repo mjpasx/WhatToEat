@@ -12,8 +12,10 @@ import * as firebase from 'firebase/app';
 export class DishComponent implements OnInit {
 
   mealItems: Observable<any[]>;
+
   constructor(public db: AngularFirestore) {
     this.mealItems = db.collection('meal-items').valueChanges();
+
   }
 
   ngOnInit() {
