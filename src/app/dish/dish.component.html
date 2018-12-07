@@ -1,12 +1,12 @@
-  <div>
-    <h4> Reviews </h4>
-      <ul>
-        <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
-          <div *ngIf="mealItem.mealName == mealItem.mealName">
-            <p>{{mealItem.review}}</p>
-            <p>Rating: {{mealItem.sentimentScore}} / 5</p>
-            <small class="text-muted">Posted by {{mealItem.user}} on {{mealItem.timestamp}}</small>
-          </div>
-        </li>
-      </ul>
-  </div>
+<div>
+  <h4> Reviews </h4>
+    <ul>
+      <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
+        <div *ngIf="mealItem.mealName == mealItem.mealName">
+          <p>{{mealItem.review}}</p>
+          <p>Rating: {{mealItem.sentimentScore}} / 5</p>
+          <small class="text-muted">Posted by {{mealItem.user}} on {{mealItem.timestamp}}</small>
+        </div>
+      </li>
+    </ul>
+</div>
