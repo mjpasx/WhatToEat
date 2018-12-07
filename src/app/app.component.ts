@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SearchService } from './search.service';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({

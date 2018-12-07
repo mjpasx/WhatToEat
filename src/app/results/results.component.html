@@ -6,12 +6,12 @@
         <div *ngIf="mealItem.restaurantName == searchInput">
           <p> Meal Name: {{mealItem.mealName}} </p>
           <p> Description: {{mealItem.description}} </p>
-          <p> Average sentiment score: {{ avgRating }} </p>
+          <p> Average sentiment score: </p>
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
           <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
               <br>
               <div *ngIf="show; else elseBlock">
-                  <app-dish></app-dish>
+                  <app-dish [mealItemName] = "mealItem.mealName"></app-dish>
               </div>
               <ng-template #elseBlock>No reviews found</ng-template>
         </div>
