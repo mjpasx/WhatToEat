@@ -6,7 +6,7 @@
         <div *ngIf="mealItem.restaurantName == searchInput">
           <p> Meal Name: {{mealItem.mealName}} </p>
           <p> Description: {{mealItem.description}} </p>
-          <p> Average sentiment score: </p>
+          <app-review-average [mealItemName] = "mealItem.mealName">Sentimen</app-review-average>
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
           <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
               <br>

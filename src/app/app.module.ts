@@ -9,6 +9,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ResultsComponent } from './results/results.component';
 import { DishComponent } from './dish/dish.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ReviewAverageComponent } from './review-average/review-average.component';
 
 
 export const environment = {
@@ -21,7 +22,7 @@ export const environment = {
 };
 
   @NgModule({
-  declarations: [AppComponent, ResultsComponent, DishComponent],
+  declarations: [AppComponent, ResultsComponent, DishComponent, ReviewAverageComponent],
   imports: [
     BrowserModule,
     FormsModule,
