@@ -2,7 +2,6 @@
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Scanner;
 
 import org.json.simple.parser.*;
 
@@ -12,50 +11,45 @@ import java.util.ArrayList;
 
 public class TestMatching
 {
-	// Constants
-    static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
-    static final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
-
-    
     static ArrayList<EntityClass> MATCHING_ALGS = new ArrayList<EntityClass>();
     
     // Each int[] is true positives, false positives, false negatives
     // for each of the MATCHING_ALGS
     static BigDecimal[][] Matches = {
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
-    		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO }
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO },
+		{ BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO }
     };
     
     // Restaurants that we'll use to test
     static final String[] TEST_RESTAURANTS = {
-    		"Pasta Pomodoro",
-    		"Sunset Grille",
-    		"The Wing Company"
-        };
+		"Pasta Pomodoro",
+		"Sunset Grille",
+		"The Wing Company"
+	};
     
     // First item is the food item from the review, the second is what we get from OpenMenu menu
     // If the second item of the 2-string array is empty, that means that there is no corresponding
@@ -346,20 +340,6 @@ public class TestMatching
     // Overall, ArrayList of all the restaurants
     static ArrayList<ArrayList<ArrayList<EntityClass>>> GOAL_MATCHES = new ArrayList<ArrayList<ArrayList<EntityClass>>>();
     
-    /*  
-     *  TEST RESTAURANTS (How many meals we could match at most)
-     *  Tokyo Kitchen (31)
-     *  Wing's Express (2)
-     *  Cardenas (2)
-     *  Pasta Pomodoro (4)
-     *  Yuki Japanese & Korean Restaurant (17)
-     *  Crabby Don's Bar and Grill (1)
-     *  Fat City Franks (9)
-     *  Doner King (8)
-     *  Westside Bistro (4)
-     *  Lumiere French Kitchen (28)
-     */
-    
     
     public static void main(String[] args) throws FileNotFoundException, ParseException
     {    	
@@ -391,12 +371,6 @@ public class TestMatching
         MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.7));
         MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.8));
         MATCHING_ALGS.add(new EntityClass("Jaccard Similarity (word-gram)", 0.9));
-    	
-    	// Open up scanners to read from the files
-    	ArrayList<Scanner> scanners = new ArrayList<Scanner>();
-    	File businessFile = new File(BUSINESS_PATH);
-        Scanner businessScanner = new Scanner(businessFile);
-        scanners.add(businessScanner);
         
         ArrayList<RestaurantClass> businessIds = new ArrayList<RestaurantClass>();
     	ArrayList<ReviewClass> reviews = new ArrayList<ReviewClass>();
@@ -408,7 +382,7 @@ public class TestMatching
 
 			// Get the business IDs, then the reviews, and send them to Google
 			System.out.println(TEST_RESTAURANTS[i]);
-    		businessIds = backend.FindBusinessId(TEST_RESTAURANTS[i], businessScanner);
+    		businessIds = backend.FindBusinessId(TEST_RESTAURANTS[i]);
     		for (int j = 0; j < businessIds.size(); j ++)
     		{
     			ArrayList<ReviewClass> newReviews = backend.GetReviews(businessIds.get(j));
@@ -1123,10 +1097,6 @@ public class TestMatching
     		}
     		System.out.format(leftAlignFormat, MATCHING_ALGS.get(i).GetWord(), MATCHING_ALGS.get(i).GetSentiment(), precision, recall, f1);
     	}
-		
-		
-    	backend.CleanUp(scanners);
-    	
     }
     
     public static boolean CaseInsensitiveMatch(String str1, String str2)
