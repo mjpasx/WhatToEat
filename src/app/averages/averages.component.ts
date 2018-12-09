@@ -10,11 +10,15 @@ import * as firebase from 'firebase/app';
   styleUrls: ['./averages.component.css']
 })
 export class AveragesComponent implements OnInit {
-  @Input() mealItemName: string;
+  @Input() mealItemNameRating: string;
   restaurants: Observable<any[]>;
+  meals: Observable<any[]>;
+  mealItems: Observable<any[]>;
 
   constructor(public db: AngularFirestore) {
+    this.mealItems = db.collection('meal-items').valueChanges();
     this.restaurants = db.collection('restaurants').valueChanges();
+    this.meals = db.collection('restaurants').doc('Pasta-Pomodoro').collection('meals').valueChanges();
   }
 
   ngOnInit() {
