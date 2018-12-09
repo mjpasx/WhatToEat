@@ -1,4 +1,5 @@
-  <div *ngFor="let restaurant of restaurants | async">
-        AVERAGE HTML
-      <br>
+  <div *ngFor="let meal of meals | async">
+      <div *ngIf = "mealItemNameRating == meal.name">
+            Average rating of {{ meal.name }}: {{ meal.avgRating }}
+      </div>
   </div>

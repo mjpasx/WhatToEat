@@ -10,8 +10,9 @@
         <div *ngIf="mealItem.restaurantName == searchInput">
           <p> Meal Name: {{mealItem.mealName}} </p>
           <p> Description: {{mealItem.description}} </p>
-          <app-averages [mealItemName] = "mealItem.mealName"></app-averages>
-          <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+
+          <app-averages [mealItemNameRating] = "mealItem.mealName"></app-averages>
+
           <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
               <br>
               <div *ngIf="show; else elseBlock">
