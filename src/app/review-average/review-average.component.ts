@@ -25,26 +25,27 @@ interface MealItem {
 export class ReviewAverageComponent implements OnInit {
   mealItemsCollection: AngularFirestoreCollection<MealItem>;
   mealItems: Observable<MealItem[]>;
+  sentimentScoreArray: Array<String>;
+  avgRating: Observable<any>;
 
   @Input() mealItemName: string;
-
-  stars: Observable<any>;
-  avgRating: Observable<any>;
 
   constructor(public db: AngularFirestore) { }
 
   ngOnInit() {
       this.mealItemsCollection = this.db.collection('meal-items');
-      this.mealItems = this.mealItemsCollection.valueChanges()
-    }
+      this.mealItems = this.mealItemsCollection.valueChanges();
+  }
 
 /*
-    this.avgRating = this.stars.map(arr => {
+  calculateAvg(sentimentScores: Array): number{
+    this.sentimentScoreArray.push(sentimentScores);
+
+    this.avgRating = this.sentimentScoresArray.map(arr => {
       const ratings = arr.map(v => v.value)
       return ratings.length ? ratings.reduce((total, val) => total + val) / arr.length : 'not reviewed'
     })
   }
-
-  */
+*/
 
 }

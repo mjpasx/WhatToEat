@@ -1,7 +1,17 @@
 <ul>
   <li *ngFor="let mealItem of mealItems | async">
     <div *ngIf="mealItem.mealName == mealItemName">
-      Sentiment Score is: {{ mealItem.sentimentScore}}
+      Sentiment Score is: {{mealItem.sentimentScore}}
+
+      <br>
+
+      <button (click)="calculateAvg(mealItem.sentimentScore)">
+          Calculate Average score
+      </button>
+
+      Average is: {{ avgRating }}
+
     </div>
+
   </li>
 </ul>

@@ -1,12 +1,16 @@
 <div style="text-align:left">
   <body ng-app = "app">
       restaurant input is {{searchInput}}
+      <div *ngFor="let restaurant of restaurants | async">
+            Overall average for restaurant is {{ restaurant.overallAvg}}
+          <br>
+      </div>
     <ul>
       <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
         <div *ngIf="mealItem.restaurantName == searchInput">
           <p> Meal Name: {{mealItem.mealName}} </p>
           <p> Description: {{mealItem.description}} </p>
-          <app-review-average [mealItemName] = "mealItem.mealName">Sentimen</app-review-average>
+          <app-averages [mealItemName] = "mealItem.mealName"></app-averages>
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
           <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
               <br>

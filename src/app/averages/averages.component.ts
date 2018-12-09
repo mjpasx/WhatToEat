@@ -5,24 +5,19 @@ import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
 @Component({
-  selector: 'app-results',
-  templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']
+  selector: 'app-averages',
+  templateUrl: './averages.component.html',
+  styleUrls: ['./averages.component.css']
 })
-
-export class ResultsComponent implements OnInit {
-  show: boolean = false;
-  mealItems: Observable<any[]>;
+export class AveragesComponent implements OnInit {
+  @Input() mealItemName: string;
   restaurants: Observable<any[]>;
 
-  @Input() searchInput: string;
-
   constructor(public db: AngularFirestore) {
-    this.mealItems = db.collection('meal-items').valueChanges();
     this.restaurants = db.collection('restaurants').valueChanges();
-
   }
 
   ngOnInit() {
   }
+
 }
