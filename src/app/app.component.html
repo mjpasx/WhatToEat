@@ -1,21 +1,26 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
 
-<div style="text-align:center">
-  <body ng-app = "app">
-    <img src="assets/logo.png" alt="logo" />
-    <h4>How does it work?</h4>
-    <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
-
-    <input #box (keyup.enter)="onEnter(box.value)">
-
-    <button (click)="show = !show">{{show ? 'Search' : 'Search'}}</button>
-        <br>
-        <div *ngIf="show; else elseBlock">
-          <app-results [searchInput] = "box.value"></app-results>
-        </div>
-        <ng-template #elseBlock>Restaurant not found :( </ng-template>
-
-  </body>
-</div>
+<body ng-app = "app">
+  <div style="text-align:center">
+      <img src="assets/logo.png" alt="logo" />
+      <h4>How does it work?</h4>
+      <h6>Type a restaurant name and we'll pull up reviews for the dishes</h6>
+      <div class="row searchbar">
+         <div class="input-group">
+           <input type="text" class="form-control" placeholder="Search for..." #box (keyup.enter)="onEnter(box.value)">
+           <span class="input-group-btn">
+              <button class="btn btn-default" type="button" (click)="show = !show"> {{show ? 'Search' : 'Search'}} </button>
+           </span>
+         </div><!-- /input-group -->
+      </div>
+          <br>
+          <div *ngIf="show; else elseBlock">
+            <app-results [searchInput] = "box.value"></app-results>
+          </div>
+        <ng-template #elseBlock> </ng-template>
+  </div>
+</body>

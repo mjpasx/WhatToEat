@@ -1,5 +1,5 @@
   <div *ngFor="let meal of meals | async">
       <div *ngIf = "mealItemNameRating == meal.name">
-            Average rating of {{ meal.name }}: {{ meal.avgRating }}
+            Average rating of {{ meal.name }}: {{ meal.avgRating }} / 5
       </div>
   </div>
