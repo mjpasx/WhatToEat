@@ -1,24 +1,34 @@
-<div style="text-align:left">
+<div style="text-align:left; padding-left: 100px">
   <body ng-app = "app">
-      restaurant input is {{searchInput}}
+      <h3> {{searchInput}} </h3>
+
+      <br>
       <div *ngFor="let restaurant of restaurants | async">
-            Overall average for restaurant is {{ restaurant.overallAvg}}
-          <br>
+            <h4> {{searchInput}}'s overall rating is a {{ restaurant.overallAvg}} out of 5 </h4>
       </div>
+      <br>
+      <br>
+
     <ul>
       <li class="text" style="display:unset" *ngFor="let mealItem of mealItems | async">
-        <div *ngIf="mealItem.restaurantName == searchInput">
-          <p> Meal Name: {{mealItem.mealName}} </p>
-          <p> Description: {{mealItem.description}} </p>
+        <div ng-repeat="mealItem in mealItems | unique: 'mealItem.mealName'">
+          <tr *ngIf="mealItem.restaurantName == searchInput">
+            <p> Name: {{mealItem.mealName}} </p>
+            <p> Description: {{mealItem.description}} </p>
 
-          <app-averages [mealItemNameRating] = "mealItem.mealName"></app-averages>
+            <app-averages [mealItemNameRating] = "mealItem.mealName"></app-averages>
+            <br>
 
-          <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
-              <br>
-              <div *ngIf="show; else elseBlock">
-                  <app-dish [mealItemName] = "mealItem.mealName"></app-dish>
-              </div>
-              <ng-template #elseBlock>No reviews found</ng-template>
+            <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
+                <br>
+                <div *ngIf="show; else elseBlock">
+                    <app-dish [mealItemName] = "mealItem.mealName"></app-dish>
+                </div>
+                <ng-template #elseBlock> </ng-template>
+                <br>
+                -------
+                <br>
+          </tr>
         </div>
       </li>
     </ul>
