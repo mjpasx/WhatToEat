@@ -66,6 +66,7 @@ public class BackendClass {
 				restaurant.SetRestName(restName);
 				restaurant.SetZipCode((String) businessObj.get("postal_code"));
 				restaurants.add(restaurant);
+				System.out.println(restaurant.GetRestName());
 			}
 		}
 		// Return empty ArrayList if we don't have a matching business
@@ -258,7 +259,7 @@ public class BackendClass {
 		try {
 			// Set up a connection with Google API
 			URL url = new URL(OPENMENU_SEARCH_URL + apiKey + "&s=" + restaurantName + "&postal_code=" + zipCode + "&country=" + country);
-			
+			System.out.println(url);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			// Construct the POST message
@@ -278,6 +279,7 @@ public class BackendClass {
 			}
 			// Turn the message into a string
 			reply = buf.toString();
+			System.out.println(reply);
 			restaurantInfo = reply;
 			
 		}
