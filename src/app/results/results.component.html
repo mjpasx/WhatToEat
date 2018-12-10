@@ -4,8 +4,13 @@
 
       <br>
       <div *ngFor="let restaurant of restaurants | async">
-            <h4> {{searchInput}}'s overall rating is a {{ restaurant.overallAvg}} out of 5 </h4>
-      </div>
+        <div *ngIf = "searchInput == 'Pasta Pomodoro' && restaurant.name == 'Pasta Pomodoro'">
+          <h4> {{searchInput}}'s overall rating is a {{ restaurant.overallAvg }} out of 5 </h4>
+        </div>
+        <div *ngIf = "searchInput == 'The Wing Company' && restaurant.name == 'The Wing Company' ">
+          <h4> {{searchInput}}'s overall rating is a {{ restaurant.overallAvg }} out of 5 </h4>
+        </div>
+          </div>
       <br>
       <br>
 
@@ -16,7 +21,7 @@
             <p> Name: {{mealItem.mealName}} </p>
             <p> Description: {{mealItem.description}} </p>
 
-            <app-averages [mealItemNameRating] = "mealItem.mealName"></app-averages>
+            <app-averages [mealItemNameRating] = "mealItem.mealName" [searchInput] = "searchInput"></app-averages>
             <br>
 
             <button (click)="show = !show">{{show ? 'Close' : 'Reviews'}}</button>
