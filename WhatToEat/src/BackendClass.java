@@ -37,7 +37,8 @@ public class BackendClass {
 	private final String OPENMENU_SEARCH_URL = "https://openmenu.com/api/v2/search.php?key=";
 	private final String OPENMENU_MENU_URL = "https://openmenu.com/api/v2/restaurant.php?key=";
 	private final String REVIEWS_PATH = "yelp_dataset/yelp_academic_dataset_review.json";
-	// private final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
+	private final String BUSINESSES_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
+	//private final String REVIEWS_PATH = "yelp_dataset/smallReviews.json";
 	private final String USERS_PATH = "yelp_dataset/yelp_academic_dataset_user.json";
 
 	public BackendClass() {
@@ -51,9 +52,12 @@ public class BackendClass {
 		}
 	}
 
-	public ArrayList<RestaurantClass> FindBusinessId(String restName, Scanner businessScanner)
+	public ArrayList<RestaurantClass> FindBusinessId(String restName)
 			throws FileNotFoundException, ParseException {
+		File businessFile = new File(BUSINESSES_PATH);
+		Scanner businessScanner = new Scanner(businessFile);
 		ArrayList<RestaurantClass> restaurants = new ArrayList<RestaurantClass>();
+		
 		while (businessScanner.hasNextLine()) {
 			String line = businessScanner.nextLine();
 			Object obj = new JSONParser().parse(line);
@@ -70,6 +74,7 @@ public class BackendClass {
 			}
 		}
 		// Return empty ArrayList if we don't have a matching business
+		businessScanner.close();
 		return restaurants;
 	}
 
@@ -85,6 +90,7 @@ public class BackendClass {
 		String user;
 		String time;
 		String businessId = business.GetId();
+		int count = 0;
 
 		while (reviewScanner.hasNextLine()) {
 			String line = reviewScanner.nextLine();
@@ -101,6 +107,8 @@ public class BackendClass {
 				time = (String) reviewObj.get("date");
 				ReviewClass newReview = new ReviewClass(review, restName, zipCode, user, time);
 				reviews.add(newReview);
+				count ++;
+				System.out.println(count);
 			}
 		}
 		reviewScanner.close();
@@ -414,11 +422,11 @@ public class BackendClass {
 
 	private boolean Match(String menu1, String menu2) {
 		
-		String[] tokens1 = Tokenize(menu1, 2, false);
-		String[] tokens2 = Tokenize(menu2, 2, false);
+		String[] tokens1 = Tokenize(menu1, 1, true);
+		String[] tokens2 = Tokenize(menu2, 2, true);
 		
 		// Use our best matching metric and threshold from testing program
-		return JaccardSimilarity(tokens1, tokens2, 0.8);
+		return JaccardSimilarity(tokens1, tokens2, 0.6);
 	}
 
 	public int SendToDatabase(ArrayList<EntityClass> ents) throws IOException, InterruptedException, ExecutionException {

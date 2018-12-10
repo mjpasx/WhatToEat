@@ -10,9 +10,6 @@ import java.util.ArrayList;
 
 public class YelpBackend
 {
-	// Constants
-    static final String BUSINESS_PATH = "yelp_dataset/yelp_academic_dataset_business.json";
-    
     public static void main(String[] args) throws ParseException, IOException, InterruptedException, ExecutionException
     {
     	BackendClass backend = new BackendClass();
@@ -21,15 +18,14 @@ public class YelpBackend
     	ArrayList<Scanner> scanners = new ArrayList<Scanner>();
         Scanner inputScanner = new Scanner(System.in);
         scanners.add(inputScanner);
-        File businessFile = new File(BUSINESS_PATH);
-        Scanner businessScanner = new Scanner(businessFile);
-        scanners.add(businessScanner);
 
         // Find the business ID corresponding to the name
         System.out.println("Enter the restaurant name: ");
         String restName = inputScanner.nextLine();
         
-        ArrayList<RestaurantClass> businesses = backend.FindBusinessId(restName, businessScanner);
+        System.out.println(restName);
+        
+        ArrayList<RestaurantClass> businesses = backend.FindBusinessId(restName);
         if (businesses.size() == 0)
         {
             System.out.println("Sorry, but we do not have any data on " + restName);
@@ -37,6 +33,7 @@ public class YelpBackend
             backend.CleanUp(scanners);
             return;
         }
+
         ArrayList<ReviewClass> reviews = new ArrayList<ReviewClass>();
         for (int i = 0; i < businesses.size(); i ++)
         {
@@ -51,21 +48,18 @@ public class YelpBackend
         	backend.CleanUp(scanners);
         	return;
         }
-
         
         //Testing the Open Menu Search
-        //String restaurantInfo = backend.QueryOpenMenuSearch("5ThaiBistro", "Portsmouth");
-        //String restaurantInfo = backend.QueryOpenMenuSearch(restName, businesses.get(0).GetZipCode());
-        String restaurantInfo = backend.QueryOpenMenuSearch(restName, "94118");
+        String restaurantInfo = backend.QueryOpenMenuSearch(restName, "06855");
         if (restaurantInfo.equals(""))
         {
         	System.out.println("Sorry but we do not have information about " + restName);
+        	backend.CleanUp(scanners);
         	return;
         }
         
-        //Testing the Open Menu Restaurant API call
+        // Getting the Open Menu menu
         String menuInfo = backend.GrabMenu(restaurantInfo);
-        
 
         // Escape quotes in reviews which were causing errors with Google API
         reviews = backend.EliminateQuotes(reviews);
@@ -90,9 +84,6 @@ public class YelpBackend
         
         ArrayList<EntityClass> databaseEntities = new ArrayList<EntityClass>();
         databaseEntities = backend.MatchMenuItems(entities, menuItems);
-        
-        //EntityClass test = new EntityClass("meal name", 5.0, "This is delicious", "Test Restaurant", "12345", "Bleech", "2018-12-3", "Test entity to add to the database");
-        //databaseEntities.add(test);
         		
         // Send the matched entities to the database
         backend.SendToDatabase(databaseEntities);
